@@ -7,7 +7,7 @@ export default function Navbar() {
   const { user } = useAuth();
 
   return (
-    <nav className="w-full bg-gradient-to-r from-green-100 to-emerald-200 shadow-md px-6 py-3 flex justify-between items-center backdrop-blur-md">
+    <nav className="w-full bg-mint-header shadow-md px-6 py-3 flex justify-between items-center backdrop-blur-md">
       {/* Logo */}
       <motion.div
         className="flex items-center gap-2"

@@ -46,6 +46,9 @@ All colors MUST be HSL.
 
     --gradient-primary: linear-gradient(135deg, hsl(217.2 91.2% 59.8%), hsl(217.2 91.2% 45%));
     --gradient-accent: linear-gradient(135deg, hsl(38 92% 50%), hsl(38 92% 40%));
+    
+    --mint-light: 145 100% 95%;
+    --mint-header: 145 55% 80%;
   }
 
   .dark {
@@ -85,6 +88,9 @@ All colors MUST be HSL.
 
     --gradient-primary: linear-gradient(135deg, hsl(217.2 91.2% 59.8%), hsl(217.2 91.2% 45%));
     --gradient-accent: linear-gradient(135deg, hsl(38 92% 50%), hsl(38 92% 40%));
+    
+    --mint-light: 145 100% 95%;
+    --mint-header: 145 55% 80%;
   }
 }
 

@@ -32,7 +32,7 @@ export default function Dashboard() {
   }, [user])
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-green-100 to-green-50">
+    <div className="min-h-screen bg-mint-light">
       {/* العنوان + مقياس اليوم */}
       <div className="flex flex-col items-center p-6">
         <h2 className="text-2xl font-bold flex items-center gap-2 mb-4">
