@@ -1,0 +1,131 @@
+import { useQuery } from "@tanstack/react-query";
+import { fetchTodayWeather } from "@/services/weather";
+import { computePollenRisk, computeSeasonPhase } from "@/services/pollen";
+import { Card } from "@/components/ui/card";
+
+function Fact({ k, v, tip }: { k: string; v: string; tip?: string }) {
+  return (
+    <div
+      className="
+        rounded-xl border bg-white/70 backdrop-blur p-3
+        transform-gpu transition-all duration-300
+        hover:scale-[1.03] hover:shadow-lg hover:bg-white
+        will-change-transform
+      "
+    >
+      <div className="text-[11px] uppercase tracking-wide text-muted-foreground">{k}</div>
+      <div className="text-lg font-semibold">{v}</div>
+      {tip ? <div className="text-[11px] text-muted-foreground">{tip}</div> : null}
+    </div>
+  );
+}
+
+export function PollenPanel({ lat, lon }: { lat: number; lon: number }) {
+  const { data, isLoading, isError, error, refetch, isFetching } = useQuery({
+    queryKey: ["pollen-panel", lat, lon],
+    queryFn: () => fetchTodayWeather(lat, lon, "auto"),
+    staleTime: 15 * 60 * 1000,
+  });
+
+  const now = new Date();
+  const season = computeSeasonPhase(now);
+  const risk =
+    data &&
+    computePollenRisk({
+      tMax: data.tMax,
+      precipSum: data.precipSum,
+      windMax: data.windMax,
+      humidityAvg: data.humidityAvg,
+    });
+
+  return (
+    <Card className="overflow-hidden border-0">
+      <div
+        className="
+          group rounded-2xl border p-6 md:p-7
+          bg-gradient-to-br from-[#f1f8e9] via-[#e6f7ff] to-[#fff0f6]
+          transform-gpu transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl
+        "
+      >
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-3">
+            {/* ✨ دائرة الخطر تتحرك قليلاً */}
+            <span
+              className="
+                inline-flex items-center justify-center w-9 h-9 rounded-full text-white font-semibold
+                transition-transform duration-300 group-hover:scale-110
+              "
+              style={{ background: risk?.color || "#22c55e" }}
+              title={`${risk?.label ?? "Low"} risk`}
+            >
+              {risk?.label === "High" ? "🌺" : risk?.label === "Medium" ? "🌼" : "🌿"}
+            </span>
+            <div className="text-lg font-semibold">
+              Today’s Allergy Risk:{" "}
+              <span style={{ color: risk?.color || "#16a34a" }}>{risk?.label ?? "Low"}</span>
+              {risk ? (
+                <span className="text-sm text-muted-foreground ml-2">({risk.score}/100)</span>
+              ) : null}
+            </div>
+          </div>
+
+          <button
+            onClick={() => refetch()}
+            className="text-xs underline opacity-80 hover:opacity-100"
+            disabled={isFetching}
+          >
+            {isFetching ? "Refreshing…" : "Refresh"}
+          </button>
+        </div>
+
+        {isLoading && <div className="opacity-70">Loading season info…</div>}
+        {isError && <div className="text-sm text-red-500">Failed: {(error as Error)?.message}</div>}
+
+        {data && risk && (
+          <>
+            {/* Progress bar تكبر ظلّها على hover بفضل group */}
+            <div className="mb-4">
+              <div className="text-sm mb-1">
+                Season Phase: <b>{season.phase}</b>
+              </div>
+              <div className="w-full h-3 bg-white/60 rounded-full overflow-hidden shadow-inner">
+                <div
+                  className="
+                    h-3 rounded-full transition-all duration-500
+                    group-hover:shadow-md
+                  "
+                  style={{
+                    width: `${season.progressPct}%`,
+                    background: "linear-gradient(90deg, #16a34a, #22c55e, #a3e635)",
+                  }}
+                />
+              </div>
+              <div className="text-xs text-muted-foreground mt-1">
+                Progress this season: {season.progressPct}%
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+              <Fact k="Max Temp" v={fmt(data.tMax, "°C")} tip="Warmth for blooming" />
+              <Fact k="Min Temp" v={fmt(data.tMin, "°C")} tip="Night conditions" />
+              <Fact k="Precip" v={fmt(data.precipSum, "mm")} tip="Rain washes pollen" />
+              <Fact k="Wind Max" v={fmt(data.windMax, "km/h")} tip="Dispersion potential" />
+              <Fact k="Avg Humidity" v={fmt(data.humidityAvg, "%")} tip="Comfort & release" />
+            </div>
+
+            <p className="text-xs text-muted-foreground mt-4">
+              * Heuristic model (temp/wind/humidity/rain). Will be refined with your CSV & NASA EO.
+            </p>
+          </>
+        )}
+      </div>
+    </Card>
+  );
+}
+
+function fmt(n: number | null, suffix = "") {
+  if (n === null || Number.isNaN(n)) return "N/A";
+  return `${Math.round(n * 10) / 10}${suffix}`;
+}
+
+export default PollenPanel;
