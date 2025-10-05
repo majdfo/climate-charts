@@ -21,7 +21,6 @@ export default function ForecastGauge() {
       try {
         const response = await fetch('/pollen_forecast_daily_rows.csv')
         const csvText = await response.text()
-        
         Papa.parse(csvText, {
           header: true,
           dynamicTyping: true,
@@ -54,23 +53,30 @@ export default function ForecastGauge() {
     sev === 'Medium' ? 5 :
     sev === 'High' ? 8 : 10
 
-  const currentPct = today.score !== undefined ? Math.round(today.score) : 0
-  const angle = Math.max(0, Math.min(180, currentPct * 1.8))
-  const R = 140
-  const cx = 190
-  const cy = 170
+  // —— Gauge geometry (matches your SVG path) ——
+  const cx = 190   // center x of the semicircle
+  const cy = 170   // center y of the semicircle
+  const R  = 140   // radius (must match the arc)
+  const pct = Math.max(0, Math.min(100, Math.round(today.score ?? 0)))
+
+  // Map 0..100% -> 180..0 degrees (left end -> right end)
+  const angleDeg = 180 - (pct / 100) * 180
+  const angleRad = (angleDeg * Math.PI) / 180
+  const markerX = cx + R * Math.cos(angleRad)
+  const markerY = cy - R * Math.sin(angleRad)
 
   return (
-    <div className="flex flex-col lg:flex-row gap-8 items-center justify-center">
-      {/* Half circle gauge for today - LEFT SIDE */}
-      <div className="flex flex-col items-center flex-shrink-0">
-        <h2 className="text-2xl font-semibold flex items-center gap-3 mb-4">
-          Today's Forecast
-          <span className="text-sm font-medium opacity-80 transition-transform duration-200 hover:scale-105">
-            Allergy Severity Meter
-          </span>
+    <div className="flex flex-col lg:flex-row gap-8 items-start justify-center">
+      {/* LEFT: Title + Gauge */}
+      <div className="flex flex-col items-start">
+        {/* العنوانين نفس الحجم */}
+        <h2 className="text-2xl font-semibold flex items-center gap-3 mb-2">
+          <span>Today&apos;s Forecast</span>
+          <span>Allergy Severity Meter</span>
         </h2>
-        <div className="relative w-96 h-48 flex items-center justify-center">
+
+        {/* Half circle gauge */}
+        <div className="relative w-96 h-48">
           <svg width="380" height="200" viewBox="0 0 380 200" className="overflow-visible">
             {/* Background arc */}
             <path
@@ -80,7 +86,7 @@ export default function ForecastGauge() {
               fill="none"
               strokeLinecap="round"
             />
-            {/* Foreground colored arc */}
+            {/* Foreground colored arc (severity fill length) */}
             <path
               d="M 50 170 A 140 140 0 0 1 330 170"
               stroke="url(#pollenGradient)"
@@ -89,21 +95,6 @@ export default function ForecastGauge() {
               strokeDasharray={`${(sevVal / 10) * 440}, 440`}
               strokeLinecap="round"
             />
-            {/* Marker on arc */}
-            <g transform={`translate(${cx}, ${cy})`}>
-              <g style={{ transform: `rotate(${angle}deg)`, transformOrigin: 'center' }}>
-                <g transform={`translate(0, ${-R})`}>
-                  <circle r="16" className="fill-white drop-shadow-lg" />
-                  <text
-                    textAnchor="middle"
-                    dominantBaseline="middle"
-                    className="fill-gray-800 text-[10px] font-semibold"
-                  >
-                    {`${currentPct}%`}
-                  </text>
-                </g>
-              </g>
-            </g>
             <defs>
               <linearGradient id="pollenGradient" x1="0%" y1="0%" x2="100%" y2="0%">
                 <stop offset="0%" stopColor="#22c55e" />
@@ -111,23 +102,52 @@ export default function ForecastGauge() {
                 <stop offset="100%" stopColor="#ef4444" />
               </linearGradient>
             </defs>
+
+            {/* Marker at the end of the current PERCENTAGE (today.score) */}
+            <g>
+              <circle cx={markerX} cy={markerY} r="16" className="fill-white drop-shadow" />
+              <text
+                x={markerX}
+                y={markerY}
+                textAnchor="middle"
+                dominantBaseline="middle"
+                className="fill-gray-800 text-[10px] font-semibold"
+              >
+                {`${pct}%`}
+              </text>
+            </g>
           </svg>
-          <div className="absolute top-38 text-center">
-            <div className="text-4xl font-bold mb-1" style={{
-              color: sev === 'Low' ? '#22c55e' : sev === 'Medium' ? '#facc15' : '#ef4444'
-            }}>
+
+          {/* Severity word in center (Medium/High/Low) */}
+          <div className="absolute left-1/2 top-[88px] -translate-x-1/2 -translate-y-1/2 text-center pointer-events-none">
+            <div
+              className="text-4xl font-bold mb-1"
+              style={{
+                color: sev === 'Low' ? '#22c55e' : sev === 'Medium' ? '#facc15' : '#ef4444'
+              }}
+            >
               {sev}
             </div>
           </div>
         </div>
+
+        {/* Date under gauge */}
         <div className="text-sm text-muted-foreground mt-2">
           {dayjs(today.date).format('MMM D, YYYY')}
         </div>
       </div>
 
-      {/* Daily forecasts - RIGHT SIDE */}
+      {/* RIGHT: Daily forecasts */}
       <div className="flex-1 w-full space-y-2">
-        <h3 className="text-sm font-semibold text-muted-foreground mb-3 px-1">7-Day Forecast</h3>
+        <h3 className="text-sm font-semibold text-muted-foreground mb-1 px-1">7-Day Forecast</h3>
+
+        {/* عنوان Pollen Emission Percentage مرة واحدة فقط فوق الكروت */}
+        <div className="flex justify-end">
+          <span className="text-[11px] leading-none tracking-wide uppercase opacity-70">
+            Pollen Emission Percentage
+          </span>
+        </div>
+
         {forecast.map((f) => {
           const dayColor =
             f.severity === 'Low' ? 'text-green-600' :
@@ -141,13 +161,9 @@ export default function ForecastGauge() {
             >
               <span className="font-semibold">{dayjs(f.date).format('dddd, MMM D')}</span>
               <div className="flex items-center gap-4">
+                {/* بس الرقم ٪ بدون لابل داخل الكارد */}
                 {f.score !== undefined && (
-                  <div className="flex flex-col items-end">
-                    <span className="text-[11px] leading-none tracking-wide uppercase opacity-70 transition-transform duration-200 hover:scale-105">
-                      Pollen Emission Percentage
-                    </span>
-                    <span className="text-sm font-medium">{Math.round(f.score)}%</span>
-                  </div>
+                  <span className="text-sm text-muted-foreground">{Math.round(f.score)}%</span>
                 )}
                 <span className={`font-bold ${dayColor}`}>{f.severity}</span>
               </div>
@@ -158,120 +174,3 @@ export default function ForecastGauge() {
     </div>
   )
 }
-
-// import { useEffect, useState } from 'react'
-// import { supabase } from '@/integrations/supabase/client'
-// import dayjs from 'dayjs'
-
-// type Forecast = {
-//   date: string
-//   severity: 'Low' | 'Medium' | 'High' | string
-//   unit: string
-//   lat: number
-//   lon: number
-// }
-
-// export default function ForecastGauge() {
-//   const [forecast, setForecast] = useState<Forecast[]>([])
-//   const [loading, setLoading] = useState(true)
-
-//   const { data, error } = await supabase
-//   .from('public.pollen_forecast_daily')
-//   .select('*')
-//   .order('date', { ascending: true })
-//   .limit(7)
-
-// console.log('rows:', data?.length, data?.[0], 'error:', error)
-
-//   useEffect(() => {
-//     async function loadForecast() {
-//       const today = dayjs().format('YYYY-MM-DD')
-//       const { data, error } = await supabase
-//         .from('pollen_forecast_daily')
-//         .select('date, lat, lon, score, severity, unit')
-//         .gte('date', today)
-//         .order('date', { ascending: true })
-//         .limit(7)
-      
-//       console.log({ error, rows: data?.length, first: data?.[0] })
-
-//       if (error) console.error(error)
-//       setForecast(data ?? [])
-//       setLoading(false)
-//     }
-//     loadForecast()
-//   }, [])
-
-//   if (loading) return <div>Loading…</div>
-//   if (!forecast.length) return <div>No data for today.</div>
-
-//   const today = forecast[0]
-//   const sev = today.severity
-//   const sevVal =
-//     sev === 'Low' ? 2 :
-//     sev === 'Medium' ? 5 :
-//     sev === 'High' ? 8 : 10
-
-//   return (
-//     <div className="flex flex-col items-center">
-//       {/* Half circle gauge for today */}
-//       <div className="relative w-72 h-40 flex items-end justify-center">
-//         <svg width="280" height="160" viewBox="0 0 280 160" className="overflow-visible">
-//           {/* Background arc */}
-//           <path
-//             d="M 40 140 A 100 100 0 0 1 240 140"
-//             stroke="hsl(var(--muted))"
-//             strokeWidth="20"
-//             fill="none"
-//             strokeLinecap="round"
-//           />
-//           {/* Foreground colored arc */}
-//           <path
-//             d="M 40 140 A 100 100 0 0 1 240 140"
-//             stroke="url(#pollenGradient)"
-//             strokeWidth="20"
-//             fill="none"
-//             strokeDasharray={`${(sevVal / 10) * 314}, 314`}
-//             strokeLinecap="round"
-//           />
-//           <defs>
-//             <linearGradient id="pollenGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-//               <stop offset="0%" stopColor="#22c55e" />
-//               <stop offset="50%" stopColor="#facc15" />
-//               <stop offset="100%" stopColor="#ef4444" />
-//             </linearGradient>
-//           </defs>
-//         </svg>
-//         <div className="absolute bottom-8 text-center">
-//           <div className="text-5xl font-bold" style={{
-//             color: sev === 'Low' ? '#22c55e' : sev === 'Medium' ? '#facc15' : '#ef4444'
-//           }}>
-//             {sev}
-//           </div>
-//           <div className="text-sm text-muted-foreground mt-1">{dayjs(today.date).format('MMM D, YYYY')}</div>
-//         </div>
-//       </div>
-
-//       {/* Next days forecast */}
-//       <div className="w-full max-w-md mt-8 space-y-2">
-//         <h3 className="text-sm font-semibold text-muted-foreground mb-3 px-1">Next Days</h3>
-//         {forecast.slice(1).map((f) => {
-//           const dayColor = 
-//             f.severity === 'Low' ? 'text-green-600' : 
-//             f.severity === 'Medium' ? 'text-yellow-600' : 
-//             'text-red-600';
-          
-//           return (
-//             <div
-//               key={f.date}
-//               className="flex justify-between items-center p-4 bg-card rounded-lg shadow-sm border"
-//             >
-//               <span className="font-semibold">{dayjs(f.date).format('dddd, MMM D')}</span>
-//               <span className={`font-bold ${dayColor}`}>{f.severity}</span>
-//             </div>
-//           );
-//         })}
-//       </div>
-//     </div>
-//   )
-// }
