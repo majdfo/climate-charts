@@ -68,6 +68,9 @@ export default function PollenDashboard() {
   return (
     <div className="mx-auto max-w-6xl px-4 py-4">
       {/* العنوان الكبير فوق */}
+      <h1 className="text-5xl font-extrabold text-center mb-6">
+        🌸 FloraSat – Irbid, Jordan
+      </h1>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
         {/* LEFT: Today gauge */}
@@ -131,7 +134,8 @@ export default function PollenDashboard() {
 
         {/* RIGHT: List */}
         <section className="w-full">
-          <div className="flex items-center gap-3 mb-2 justify-start">
+          {/* العنوانين على طرفين */}
+          <div className="flex items-center justify-between mb-2">
             <span className="text-[11px] leading-none tracking-wide uppercase opacity-70">
               7-Day Forecast
             </span>
