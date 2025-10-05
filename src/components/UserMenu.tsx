@@ -1,29 +1,61 @@
 import { useAuth } from "@/auth/AuthGate";
-import { useState } from "react";
-import { Menu, MenuButton, MenuItem, MenuList } from "@chakra-ui/react"; // أو shadcn dropdown
-import { Avatar } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
+import { supabase } from "@/integrations/supabase/client";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export function UserMenu() {
-  const { user, signOut } = useAuth();
-  const [open, setOpen] = useState(false);
+  const { user } = useAuth();
+
+  const initials =
+    (user?.user_metadata?.name as string | undefined)?.[0]?.toUpperCase() ||
+    user?.email?.[0]?.toUpperCase() ||
+    "U";
+
+  const displayName =
+    (user?.user_metadata?.name as string | undefined) ||
+    user?.email?.split("@")[0] ||
+    "User";
+
+  const onSignOut = async () => {
+    await supabase.auth.signOut();
+    window.location.href = "/";
+  };
 
   return (
-    <Menu isOpen={open} onClose={() => setOpen(false)}>
-      <MenuButton onClick={() => setOpen(!open)}>
-        <Avatar name={user?.email} className="cursor-pointer" />
-      </MenuButton>
-      <MenuList className="bg-white shadow-md rounded-lg p-2 w-56">
-        <div className="px-3 py-2 border-b border-gray-200">
-          <p className="font-semibold text-gray-800">
-            {user?.user_metadata?.name || "User"}
-          </p>
-          <p className="text-sm text-gray-500">{user?.email}</p>
-        </div>
-        <MenuItem as="button" onClick={signOut} className="text-red-600">
-          Sign Out
-        </MenuItem>
-      </MenuList>
-    </Menu>
+    <DropdownMenu>
+      <DropdownMenuTrigger className="outline-none">
+        <Avatar className="h-9 w-9 ring-2 ring-primary/30 hover:ring-primary transition">
+          <AvatarFallback className="bg-primary/10 text-primary font-semibold">
+            {initials}
+          </AvatarFallback>
+        </Avatar>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="min-w-[240px]">
+        <DropdownMenuLabel className="leading-tight">
+          <div className="font-semibold">{displayName}</div>
+          <div className="text-xs text-muted-foreground truncate">{user?.email}</div>
+        </DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem onClick={() => (window.location.href = "/dashboard")}>
+          Dashboard
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => (window.location.href = "/trends")}>
+          Trends
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem onClick={onSignOut} className="text-red-600">
+          Sign out
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }
+
+export default UserMenu;
