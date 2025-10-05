@@ -1,6 +1,7 @@
 import { useAuth } from "@/auth/AuthGate";
 import { motion } from "framer-motion";
 import { UserMenu } from "@/components/UserMenu";
+import { Flower2 } from "lucide-react";
 
 export default function Navbar() {
   const { user } = useAuth();
@@ -14,9 +15,9 @@ export default function Navbar() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <span className="text-2xl">🌸</span>
+        <Flower2 className="h-6 w-6 text-pink-400" />
         <h1 className="text-xl md:text-2xl font-bold text-green-700 tracking-tight">
-          BloomWatch
+          FloraSat
         </h1>
       </motion.div>
 

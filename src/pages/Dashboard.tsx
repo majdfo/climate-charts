@@ -35,7 +35,7 @@ export default function Dashboard() {
     <div className="min-h-screen bg-gradient-to-b from-green-100 to-green-50">
       {/* العنوان + مقياس اليوم */}
       <div className="flex flex-col items-center p-6">
-        <h1 className="text-xl font-bold mb-4">🌸 BloomWatch – Irbid</h1>
+        <h1 className="text-xl font-bold mb-4">🌸 FloraSat – Irbid</h1>
         <ForecastGauge />
       </div>
 

@@ -18,13 +18,13 @@ export default function Home() {
       <div className="container mx-auto px-4 py-20">
         <div className="mx-auto max-w-4xl text-center">
           <div className="mb-8 flex justify-center">
-            <div className="rounded-full bg-primary/10 p-6">
-              <Flower2 className="h-16 w-16 text-primary" />
+            <div className="rounded-full bg-pink-100 p-6">
+              <Flower2 className="h-16 w-16 text-pink-400" />
             </div>
           </div>
 
           <h1 className="mb-4 text-5xl font-bold tracking-tight">
-            BloomWatch
+            FloraSat
           </h1>
           <p className="mb-8 text-xl text-muted-foreground">
             Track pollen forecasts, weather conditions, and bloom trends for Irbid, Jordan
