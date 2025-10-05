@@ -38,7 +38,7 @@ export default function Home() {
             <Card className="border-2">
               <CardContent className="pt-6">
                 <div className="mb-4 flex justify-center">
-                  <Flower2 className="h-10 w-10 text-primary" />
+                  <Flower2 className="h-10 w-10 text-pink-400" />
                 </div>
                 <h3 className="mb-2 font-semibold text-lg">Pollen Forecasts</h3>
                 <p className="text-sm text-muted-foreground">
@@ -50,7 +50,7 @@ export default function Home() {
             <Card className="border-2">
               <CardContent className="pt-6">
                 <div className="mb-4 flex justify-center">
-                  <CloudSun className="h-10 w-10 text-primary" />
+                  <CloudSun className="h-10 w-10 text-pink-400" />
                 </div>
                 <h3 className="mb-2 font-semibold text-lg">Weather Tracking</h3>
                 <p className="text-sm text-muted-foreground">
@@ -62,7 +62,7 @@ export default function Home() {
             <Card className="border-2">
               <CardContent className="pt-6">
                 <div className="mb-4 flex justify-center">
-                  <TrendingUp className="h-10 w-10 text-primary" />
+                  <TrendingUp className="h-10 w-10 text-pink-400" />
                 </div>
                 <h3 className="mb-2 font-semibold text-lg">Historical Trends</h3>
                 <p className="text-sm text-muted-foreground">

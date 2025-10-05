@@ -115,14 +115,14 @@ export default function Trends() {
         <CardHeader>
           <CardTitle>Feature Under Development</CardTitle>
           <CardDescription>
-            We're working on making BloomWatch scalable for all locations
+            We're working on making FloraSat scalable for all locations
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="bg-muted p-6 rounded-lg">
             <h3 className="font-semibold text-lg mb-3">Currently Available</h3>
             <p className="text-sm text-muted-foreground mb-2">
-              BloomWatch currently provides pollen tracking and historical data for <strong>Irbid, Jordan</strong>.
+              FloraSat currently provides pollen tracking and historical data for <strong>Irbid, Jordan</strong>.
             </p>
             <p className="text-sm text-muted-foreground">
               View current forecasts on the Dashboard and explore 10 years of historical pollen trends.

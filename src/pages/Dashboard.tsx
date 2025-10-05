@@ -35,7 +35,7 @@ export default function Dashboard() {
     <div className="min-h-screen bg-gradient-to-b from-green-100 to-green-50">
       {/* العنوان + مقياس اليوم */}
       <div className="flex flex-col items-center p-6">
-        <h1 className="text-xl font-bold mb-4">🌸 FloraSat – Irbid</h1>
+        <h1 className="text-xl font-bold mb-4">🌸 FloraSat – Irbid, Jordan</h1>
         <ForecastGauge />
       </div>
 
@@ -49,7 +49,7 @@ export default function Dashboard() {
         <div className="grid gap-6 md:grid-cols-2">
           <Card>
             <CardHeader>
-              <CardTitle>View Historical Trends - Irbid</CardTitle>
+              <CardTitle>View Historical Trends - Irbid, Jordan</CardTitle>
               <CardDescription>
                 Explore pollen season patterns from 2015 to 2025
               </CardDescription>

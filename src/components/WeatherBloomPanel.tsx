@@ -79,7 +79,7 @@ export function WeatherBloomPanel({ lat, lon }: { lat: number; lon: number }) {
             </div>
 
             <p className="text-xs text-muted-foreground mt-4">
-              Data: Open-Meteo • Styled for BloomWatch phenology insights
+              Data: Open-Meteo • Styled for FloraSat phenology insights
             </p>
           </>
         )}
