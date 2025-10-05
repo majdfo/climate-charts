@@ -55,14 +55,14 @@ export default function ForecastGauge() {
     sev === 'High' ? 8 : 10
 
   return (
-    <div className="flex flex-col lg:flex-row gap-8 items-start">
+    <div className="flex flex-col lg:flex-row gap-8 items-center justify-center">
       {/* Half circle gauge for today - LEFT SIDE */}
       <div className="flex flex-col items-center flex-shrink-0">
-        <div className="relative w-96 h-52 flex items-end justify-center">
-          <svg width="380" height="220" viewBox="0 0 380 220" className="overflow-visible">
+        <div className="relative w-96 h-48 flex items-center justify-center">
+          <svg width="380" height="200" viewBox="0 0 380 200" className="overflow-visible">
             {/* Background arc */}
             <path
-              d="M 50 190 A 140 140 0 0 1 330 190"
+              d="M 50 170 A 140 140 0 0 1 330 170"
               stroke="#e5e7eb"
               strokeWidth="28"
               fill="none"
@@ -70,7 +70,7 @@ export default function ForecastGauge() {
             />
             {/* Foreground colored arc */}
             <path
-              d="M 50 190 A 140 140 0 0 1 330 190"
+              d="M 50 170 A 140 140 0 0 1 330 170"
               stroke="url(#pollenGradient)"
               strokeWidth="28"
               fill="none"
@@ -85,21 +85,21 @@ export default function ForecastGauge() {
               </linearGradient>
             </defs>
           </svg>
-          <div className="absolute bottom-12 text-center">
-            <div className="text-6xl font-bold" style={{
-              color: sev === 'Low' ? '#22c55e' : sev === 'Medium' ? '#facc15' : '#ef4444'
-            }}>
-              {sev}
-            </div>
+          <div className="absolute top-16 text-center">
             {today.score !== undefined && (
-              <div className="text-2xl font-semibold text-muted-foreground mt-2">
-                {today.score}%
+              <div className="text-3xl font-bold text-muted-foreground">
+                {Math.round(today.score)}%
               </div>
             )}
             <div className="text-sm text-muted-foreground mt-1">
               {dayjs(today.date).format('MMM D, YYYY')}
             </div>
           </div>
+        </div>
+        <div className="text-5xl font-bold mt-2" style={{
+          color: sev === 'Low' ? '#22c55e' : sev === 'Medium' ? '#facc15' : '#ef4444'
+        }}>
+          {sev}
         </div>
       </div>
 
@@ -120,7 +120,7 @@ export default function ForecastGauge() {
               <span className="font-semibold">{dayjs(f.date).format('dddd, MMM D')}</span>
               <div className="flex items-center gap-4">
                 {f.score !== undefined && (
-                  <span className="text-sm text-muted-foreground">{f.score}%</span>
+                  <span className="text-sm text-muted-foreground">{Math.round(f.score)}%</span>
                 )}
                 <span className={`font-bold ${dayColor}`}>{f.severity}</span>
               </div>
