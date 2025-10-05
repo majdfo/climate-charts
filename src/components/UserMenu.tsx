@@ -47,10 +47,10 @@ export function UserMenu() {
           Dashboard
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => (window.location.href = "/historical-trends")}>
-          Historical Trends - Irbid
+          Historical Trends - Irbid, Jordan
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => (window.location.href = "/trends")}>
-          Trends
+          Trends - Coming Soon
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={onSignOut} className="text-red-600">
