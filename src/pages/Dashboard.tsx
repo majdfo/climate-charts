@@ -66,18 +66,19 @@ export default function Dashboard() {
 
           <Card>
             <CardHeader>
-              <CardTitle>Get Started with Trend Analysis</CardTitle>
+              <CardTitle>Custom Trend Analysis - Coming Soon</CardTitle>
               <CardDescription>
-                Upload your data and start analyzing seasonal patterns
+                Currently, this platform provides data for Irbid, Jordan. We're working on scalability to allow users to upload their own location data.
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <Link to="/trends">
-                <Button className="gap-2">
-                  <TrendingUp className="h-4 w-4" />
-                  Go to Trends
-                </Button>
-              </Link>
+              <p className="text-sm text-muted-foreground mb-4">
+                Soon you'll be able to upload CSV files with weather factors and EVI data to get personalized dashboards and historical trends for your location.
+              </p>
+              <Button className="gap-2" disabled>
+                <TrendingUp className="h-4 w-4" />
+                Coming Soon
+              </Button>
             </CardContent>
           </Card>
         </div>
