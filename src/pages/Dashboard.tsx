@@ -1,21 +1,33 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/auth/AuthGate';
-import { doc, getDoc } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
+import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import { TrendingUp, Calendar, User } from 'lucide-react';
 
+interface UserProfile {
+  email: string;
+  created_at: string;
+  last_login_at: string;
+}
+
 export default function Dashboard() {
   const { user } = useAuth();
-  const [userData, setUserData] = useState<any>(null);
+  const [userData, setUserData] = useState<UserProfile | null>(null);
 
   useEffect(() => {
     const fetchUserData = async () => {
       if (user) {
-        const userDoc = await getDoc(doc(db, 'users', user.uid));
-        setUserData(userDoc.data());
+        const { data, error } = await supabase
+          .from('profiles')
+          .select('email, created_at, last_login_at')
+          .eq('id', user.id)
+          .maybeSingle();
+
+        if (!error && data) {
+          setUserData(data);
+        }
       }
     };
     fetchUserData();
@@ -46,7 +58,7 @@ export default function Dashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {userData?.lastLoginAt ? new Date(userData.lastLoginAt.seconds * 1000).toLocaleDateString() : 'N/A'}
+              {userData?.last_login_at ? new Date(userData.last_login_at).toLocaleDateString() : 'N/A'}
             </div>
           </CardContent>
         </Card>
@@ -58,7 +70,7 @@ export default function Dashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {userData?.createdAt ? new Date(userData.createdAt.seconds * 1000).toLocaleDateString() : 'N/A'}
+              {userData?.created_at ? new Date(userData.created_at).toLocaleDateString() : 'N/A'}
             </div>
           </CardContent>
         </Card>

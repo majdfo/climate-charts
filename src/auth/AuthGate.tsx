@@ -1,11 +1,11 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { User, onAuthStateChanged, signInWithPopup, signOut as firebaseSignOut } from 'firebase/auth';
-import { doc, setDoc, getDoc, serverTimestamp } from 'firebase/firestore';
-import { auth, provider, db } from '@/lib/firebase';
+import { User, Session } from '@supabase/supabase-js';
+import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
 
 interface AuthContextType {
   user: User | null;
+  session: Session | null;
   isAdmin: boolean;
   loading: boolean;
   signInWithGoogle: () => Promise<void>;
@@ -16,67 +16,79 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
+  const [session, setSession] = useState<Session | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!auth || !db) {
-      setLoading(false);
-      return;
-    }
+    // Set up auth state listener first
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event, currentSession) => {
+        setSession(currentSession);
+        setUser(currentSession?.user ?? null);
 
-    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
-      setUser(firebaseUser);
-      
-      if (firebaseUser) {
-        // Check admin status
-        const userDoc = await getDoc(doc(db, 'users', firebaseUser.uid));
-        setIsAdmin(userDoc.data()?.isAdmin || false);
-      } else {
-        setIsAdmin(false);
+        // Defer profile check to avoid deadlock
+        if (currentSession?.user) {
+          setTimeout(() => {
+            checkAdminStatus(currentSession.user.id);
+          }, 0);
+        } else {
+          setIsAdmin(false);
+        }
       }
+    );
+
+    // Then check for existing session
+    supabase.auth.getSession().then(({ data: { session: currentSession } }) => {
+      setSession(currentSession);
+      setUser(currentSession?.user ?? null);
       
+      if (currentSession?.user) {
+        checkAdminStatus(currentSession.user.id);
+      }
       setLoading(false);
     });
 
-    return () => unsubscribe();
+    return () => subscription.unsubscribe();
   }, []);
 
-  const signInWithGoogle = async () => {
-    if (!auth || !db) {
-      toast({
-        title: 'Firebase not configured',
-        description: 'Please add Firebase credentials to continue.',
-        variant: 'destructive',
-      });
-      return;
-    }
-
+  const checkAdminStatus = async (userId: string) => {
     try {
-      const result = await signInWithPopup(auth, provider);
-      
-      // Upsert user document
-      const userRef = doc(db, 'users', result.user.uid);
-      const userDoc = await getDoc(userRef);
-      
-      if (!userDoc.exists()) {
-        await setDoc(userRef, {
-          uid: result.user.uid,
-          email: result.user.email,
-          createdAt: serverTimestamp(),
-          lastLoginAt: serverTimestamp(),
-          isAdmin: false,
-        });
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('is_admin')
+        .eq('id', userId)
+        .maybeSingle();
+
+      if (!error && data) {
+        setIsAdmin(data.is_admin || false);
       } else {
-        await setDoc(userRef, {
-          lastLoginAt: serverTimestamp(),
-        }, { merge: true });
+        setIsAdmin(false);
       }
-      
-      toast({
-        title: 'Welcome!',
-        description: 'Successfully signed in with Google.',
+    } catch (error) {
+      console.error('Error checking admin status:', error);
+      setIsAdmin(false);
+    }
+  };
+
+  const signInWithGoogle = async () => {
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/dashboard`,
+        },
       });
+
+      if (error) throw error;
+
+      // Update last login time
+      if (user) {
+        await supabase
+          .from('profiles')
+          .update({ last_login_at: new Date().toISOString() })
+          .eq('id', user.id);
+      }
     } catch (error: any) {
       console.error('Sign in error:', error);
       toast({
@@ -88,12 +100,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const signOut = async () => {
-    if (!auth) {
-      return;
-    }
-
     try {
-      await firebaseSignOut(auth);
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+
       toast({
         title: 'Signed out',
         description: 'Successfully signed out.',
@@ -109,7 +119,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, isAdmin, loading, signInWithGoogle, signOut }}>
+    <AuthContext.Provider value={{ user, session, isAdmin, loading, signInWithGoogle, signOut }}>
       {children}
     </AuthContext.Provider>
   );

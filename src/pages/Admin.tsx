@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
-import { collection, getDocs } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
+import { supabase } from '@/integrations/supabase/client';
 import {
   Table,
   TableBody,
@@ -15,25 +14,30 @@ import { Input } from '@/components/ui/input';
 import { Download, Search } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 
-interface UserData {
-  uid: string;
+interface UserProfile {
+  id: string;
   email: string;
-  createdAt: any;
-  lastLoginAt: any;
-  isAdmin: boolean;
+  created_at: string;
+  last_login_at: string;
+  is_admin: boolean;
 }
 
 export default function Admin() {
-  const [users, setUsers] = useState<UserData[]>([]);
-  const [filteredUsers, setFilteredUsers] = useState<UserData[]>([]);
+  const [users, setUsers] = useState<UserProfile[]>([]);
+  const [filteredUsers, setFilteredUsers] = useState<UserProfile[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     const fetchUsers = async () => {
-      const querySnapshot = await getDocs(collection(db, 'users'));
-      const usersData = querySnapshot.docs.map(doc => doc.data() as UserData);
-      setUsers(usersData);
-      setFilteredUsers(usersData);
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (!error && data) {
+        setUsers(data);
+        setFilteredUsers(data);
+      }
     };
     fetchUsers();
   }, []);
@@ -49,9 +53,9 @@ export default function Admin() {
     const headers = ['Email', 'Created At', 'Last Login', 'Is Admin'];
     const rows = filteredUsers.map(user => [
       user.email,
-      user.createdAt ? new Date(user.createdAt.seconds * 1000).toLocaleString() : 'N/A',
-      user.lastLoginAt ? new Date(user.lastLoginAt.seconds * 1000).toLocaleString() : 'N/A',
-      user.isAdmin ? 'Yes' : 'No',
+      user.created_at ? new Date(user.created_at).toLocaleString() : 'N/A',
+      user.last_login_at ? new Date(user.last_login_at).toLocaleString() : 'N/A',
+      user.is_admin ? 'Yes' : 'No',
     ]);
 
     const csvContent = [
@@ -106,16 +110,16 @@ export default function Admin() {
             </TableHeader>
             <TableBody>
               {filteredUsers.map((user) => (
-                <TableRow key={user.uid}>
+                <TableRow key={user.id}>
                   <TableCell className="font-medium">{user.email}</TableCell>
                   <TableCell>
-                    {user.createdAt ? new Date(user.createdAt.seconds * 1000).toLocaleDateString() : 'N/A'}
+                    {user.created_at ? new Date(user.created_at).toLocaleDateString() : 'N/A'}
                   </TableCell>
                   <TableCell>
-                    {user.lastLoginAt ? new Date(user.lastLoginAt.seconds * 1000).toLocaleDateString() : 'N/A'}
+                    {user.last_login_at ? new Date(user.last_login_at).toLocaleDateString() : 'N/A'}
                   </TableCell>
                   <TableCell>
-                    {user.isAdmin ? (
+                    {user.is_admin ? (
                       <Badge>Admin</Badge>
                     ) : (
                       <Badge variant="secondary">User</Badge>

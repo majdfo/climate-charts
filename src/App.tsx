@@ -1,14 +1,11 @@
-// src/App.tsx
 import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "sonner"; // ← أسهل وأضمن من ملف shadcn/sonner
+import { Toaster as Sonner } from "sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./auth/AuthGate";
 import { ProtectedRoute } from "./auth/ProtectedRoute";
 import { Navbar } from "./components/Navbar";
-import { FirebaseSetupBanner } from "./components/FirebaseSetupBanner";
-import { firebaseConfigured } from "./lib/firebase";
 import Home from "./pages/Home";
 import Dashboard from "./pages/Dashboard";
 import Trends from "./pages/Trends";
@@ -18,17 +15,6 @@ import NotFound from "./pages/NotFound";
 const queryClient = new QueryClient();
 
 const App = () => {
-  if (!firebaseConfigured) {
-    // عرض بانر الإعداد مع التوسترات لتظهر التحذيرات بدل كسر التطبيق
-    return (
-      <>
-        <FirebaseSetupBanner />
-        <Toaster />
-        <Sonner />
-      </>
-    );
-  }
-
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
@@ -63,7 +49,6 @@ const App = () => {
               />
               <Route path="*" element={<NotFound />} />
             </Routes>
-            {/* خلي التوسترات داخل الـ Router */}
             <Toaster />
             <Sonner />
           </BrowserRouter>
