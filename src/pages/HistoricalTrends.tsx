@@ -11,6 +11,7 @@ import pollen2022 from '@/assets/pollen-2022.png';
 import pollen2023 from '@/assets/pollen-2023.png';
 import pollen2024 from '@/assets/pollen-2024.png';
 import pollen2025 from '@/assets/pollen-2025.png';
+import pollenSummary from '@/assets/pollen-season-summary.png';
 
 // Season data from CSV
 const seasonData: Record<number, { start: string; end: string; duration: number }> = {
@@ -39,6 +40,22 @@ export default function HistoricalTrends() {
         <h1 className="text-3xl font-bold">Historical Trends - Irbid, Jordan</h1>
         <p className="text-muted-foreground">Pollen season patterns from 2015 to 2025</p>
       </div>
+
+      <Card className="mb-6">
+        <CardHeader>
+          <CardTitle className="text-center">Season Summary</CardTitle>
+          <CardDescription className="text-center">
+            Pollen season window (start-end) for all years
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="flex justify-center">
+          <img 
+            src={pollenSummary} 
+            alt="Pollen season window summary for all years from 2015 to 2025"
+            className="w-full max-w-4xl h-auto rounded"
+          />
+        </CardContent>
+      </Card>
 
       <Card>
         <CardHeader>
