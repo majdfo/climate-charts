@@ -54,10 +54,22 @@ export default function ForecastGauge() {
     sev === 'Medium' ? 5 :
     sev === 'High' ? 8 : 10
 
+  const currentPct = today.score !== undefined ? Math.round(today.score) : 0
+  const angle = Math.max(0, Math.min(180, currentPct * 1.8))
+  const R = 140
+  const cx = 190
+  const cy = 170
+
   return (
     <div className="flex flex-col lg:flex-row gap-8 items-center justify-center">
       {/* Half circle gauge for today - LEFT SIDE */}
       <div className="flex flex-col items-center flex-shrink-0">
+        <h2 className="text-2xl font-semibold flex items-center gap-3 mb-4">
+          Today's Forecast
+          <span className="text-sm font-medium opacity-80 transition-transform duration-200 hover:scale-105">
+            Allergy Severity Meter
+          </span>
+        </h2>
         <div className="relative w-96 h-48 flex items-center justify-center">
           <svg width="380" height="200" viewBox="0 0 380 200" className="overflow-visible">
             {/* Background arc */}
@@ -77,6 +89,21 @@ export default function ForecastGauge() {
               strokeDasharray={`${(sevVal / 10) * 440}, 440`}
               strokeLinecap="round"
             />
+            {/* Marker on arc */}
+            <g transform={`translate(${cx}, ${cy})`}>
+              <g style={{ transform: `rotate(${angle}deg)`, transformOrigin: 'center' }}>
+                <g transform={`translate(0, ${-R})`}>
+                  <circle r="16" className="fill-white drop-shadow-lg" />
+                  <text
+                    textAnchor="middle"
+                    dominantBaseline="middle"
+                    className="fill-gray-800 text-[10px] font-semibold"
+                  >
+                    {`${currentPct}%`}
+                  </text>
+                </g>
+              </g>
+            </g>
             <defs>
               <linearGradient id="pollenGradient" x1="0%" y1="0%" x2="100%" y2="0%">
                 <stop offset="0%" stopColor="#22c55e" />
@@ -91,11 +118,6 @@ export default function ForecastGauge() {
             }}>
               {sev}
             </div>
-            {today.score !== undefined && (
-              <div className="text-2xl font-semibold text-muted-foreground">
-                {Math.round(today.score)}%
-              </div>
-            )}
           </div>
         </div>
         <div className="text-sm text-muted-foreground mt-2">
@@ -120,7 +142,12 @@ export default function ForecastGauge() {
               <span className="font-semibold">{dayjs(f.date).format('dddd, MMM D')}</span>
               <div className="flex items-center gap-4">
                 {f.score !== undefined && (
-                  <span className="text-sm text-muted-foreground">{Math.round(f.score)}%</span>
+                  <div className="flex flex-col items-end">
+                    <span className="text-[11px] leading-none tracking-wide uppercase opacity-70 transition-transform duration-200 hover:scale-105">
+                      Pollen Emission Percentage
+                    </span>
+                    <span className="text-sm font-medium">{Math.round(f.score)}%</span>
+                  </div>
                 )}
                 <span className={`font-bold ${dayColor}`}>{f.severity}</span>
               </div>
