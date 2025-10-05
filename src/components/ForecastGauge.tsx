@@ -79,13 +79,13 @@ export default function PollenDashboard() {
 
   const advice =
   sev === 'Very High'
-    ? "Pollen levels are *off the charts* today! Best to stay indoors if you can — keep windows shut, use an air filter if possible, and wear a snug N95 mask outside. Allergy or asthma folks: keep your meds close and stick to your doctor’s plan!"
+    ? "Pollen levels are *off the charts* today! Best to stay indoors if you can — keep windows shut, use an air filter if possible, and wear a snug N95 mask outside. Allergy or asthma folks: keep your meds close and stick to your doctor’s plan"
     : sev === 'High'
-    ? "Pollen is running high — try to limit outdoor time, wear a mask if you go out, and close windows during windy hours. Allergy sufferers, stay alert and take your preventive meds."
+    ? "Pollen is running high — try to limit outdoor time, wear a mask if you go out, and close windows during windy hours. Allergy sufferers, stay alert and take your preventive meds"
     : sev === 'Medium'
-    ? "Outdoor activities are fine, just with a little caution! Avoid peak hours (noon or windy times), and close the windows if needed."
+    ? "Outdoor activities are fine, just with a little caution! Avoid peak hours (noon or windy times), and close the windows if needed"
     : sev === 'Low'
-    ? "It’s a good day to get outside — low pollen levels mean easy breathing! Just stay mindful if the weather changes or wind picks up."
+    ? "It’s a good day to get outside — low pollen levels mean easy breathing! Just stay mindful if the weather changes or wind picks up"
     : "Enjoy the day — conditions look calm and comfortable!";
 
   return (
