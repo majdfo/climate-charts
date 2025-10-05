@@ -11,7 +11,7 @@ import pollen2022 from '@/assets/pollen-2022.png';
 import pollen2023 from '@/assets/pollen-2023.png';
 import pollen2024 from '@/assets/pollen-2024.png';
 import pollen2025 from '@/assets/pollen-2025.png';
-import pollenSummary from '@/assets/pollen-season-summary.png';
+import pollenSummary from '@/assets/pollen-season-summary-v2.png';
 
 // Season data from CSV
 const seasonData: Record<number, { start: string; end: string; duration: number }> = {
