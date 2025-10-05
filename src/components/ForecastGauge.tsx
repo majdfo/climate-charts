@@ -54,20 +54,19 @@ export default function PollenDashboard() {
     sev === 'High' ? 8 :
     sev === 'Very High' ? 10 : 7
 
-  // ---- Gauge geometry ----
   const cx = 190, cy = 170, R = 140
   const pct = Math.max(0, Math.min(100, Math.round(today.score ?? 0)))
   const angleDeg = 180 - (pct / 100) * 180
   const angleRad = (angleDeg * Math.PI) / 180
   const markerR = R - 6
   const markerX = cx + markerR * Math.cos(angleRad)
-  const markerY = cy - markerR * Math.sin(angleRad) + 4
+  const markerY = cy - markerR * Math.sin(angleRad) - 6 // ⬆ رفعناها شوي لتصير فوق المؤشر بالضبط
 
   const sevColor =
     sev === 'Low' ? '#22c55e' :
     sev === 'Medium' ? '#facc15' :
-    sev === 'High' ? '#ef7d1a' : // برتقالي لمستوى High
-    '#ef4444' // Very High
+    sev === 'High' ? '#ef7d1a' :
+    '#ef4444'
 
   const advice =
     sev === 'Very High'
@@ -75,28 +74,23 @@ export default function PollenDashboard() {
       : sev === 'High'
       ? 'التعرّض عالي اليوم: قلّل الأنشطة الخارجية، استخدم كمامة عند الخروج، وأغلق النوافذ وقت الرياح. لمرضى الحساسية: راقب الأعراض وخذ الدواء الوقائي.'
       : sev === 'Medium'
-      ? 'مستوى متوسط: الأنشطة الخارجية ممكنة مع الحذر؛ تجنّب فترات الذروة (الظهر/الرياح)، واغلق النوافذ عند الحاجة.'
+      ? ' الأنشطة الخارجية ممكنة مع الحذر؛ تجنّب فترات الذروة (الظهر/الرياح)، واغلق النوافذ عند الحاجة.'
       : 'مستوى منخفض: الأنشطة الخارجية طبيعية، مع الانتباه عند تغيّر الطقس أو وجود رياح قوية.'
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-4">
-      {/* العنوان الكبير */}
-      <h1 className="text-5xl font-extrabold text-center mb-6">
-        🌸 FloraSat – Irbid, Jordan
-      </h1>
+    
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
-        {/* LEFT: Today gauge + advice */}
+        {/* LEFT: Gauge */}
         <section>
           <h2 className="text-lg font-semibold flex items-center gap-3 mb-3 justify-center lg:justify-start">
             <span>Today&apos;s Forecast</span>
             <span>Allergy Severity Meter</span>
           </h2>
 
-          {/* Gauge */}
-          <div className="relative w-96 h-48 mx-auto lg:mx-0">
+          <div className="relative w-96 h-56 mx-auto lg:mx-0">
             <svg width="380" height="200" viewBox="0 0 380 200" className="overflow-visible">
-              {/* Background arc */}
               <path
                 d="M 50 170 A 140 140 0 0 1 330 170"
                 stroke="#e5e7eb"
@@ -104,7 +98,6 @@ export default function PollenDashboard() {
                 fill="none"
                 strokeLinecap="round"
               />
-              {/* Foreground arc */}
               <path
                 d="M 50 170 A 140 140 0 0 1 330 170"
                 stroke="url(#pollenGradient)"
@@ -126,7 +119,7 @@ export default function PollenDashboard() {
                 <circle cx={markerX} cy={markerY} r="16" className="fill-white drop-shadow" />
                 <text
                   x={markerX}
-                  y={markerY}
+                  y={markerY + 1}
                   textAnchor="middle"
                   dominantBaseline="middle"
                   className="fill-gray-800 text-[10px] font-semibold"
@@ -136,9 +129,9 @@ export default function PollenDashboard() {
               </g>
             </svg>
 
-            {/* Severity word */}
-            <div className="absolute left-1/2 top-[88px] -translate-x-1/2 -translate-y-1/2 text-center pointer-events-none">
-              <div className="text-4xl font-extrabold mb-1" style={{ color: sevColor }}>
+            {/* Severity text lowered */}
+            <div className="absolute left-1/2 top-[120px] -translate-x-1/2 text-center pointer-events-none">
+              <div className="text-4xl font-extrabold" style={{ color: sevColor }}>
                 {sev}
               </div>
             </div>
@@ -153,7 +146,6 @@ export default function PollenDashboard() {
 
         {/* RIGHT: List */}
         <section className="w-full">
-          {/* العناوين على طرفين */}
           <div className="flex items-center justify-between mb-2">
             <span className="text-[11px] leading-none tracking-wide uppercase opacity-70">
               7-Day Forecast
@@ -163,7 +155,6 @@ export default function PollenDashboard() {
             </span>
           </div>
 
-          {/* نزّل الكروت شوي عن العناوين */}
           <div className="space-y-2 mt-3">
             {forecast.map((f) => {
               const dayColor =
