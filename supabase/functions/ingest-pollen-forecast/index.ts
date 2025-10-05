@@ -1,12 +1,27 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.7.1';
+// supabase/functions/ingest-pollen-forecast/index.ts
+import { serve } from "https://deno.land/std@0.177.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.33.1";
 
 const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-interface PollenForecastData {
+// استخدمي Service Role Key (ليس anon)
+const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
+const SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+// حماية اختيارية بهيدر Authorization
+const INGEST_SECRET = Deno.env.get("INGEST_SECRET_KEY") || "";
+
+const supabase = createClient(SUPABASE_URL, SERVICE_ROLE_KEY);
+
+interface RowV1 {
+  time: string;             // "YYYY-MM-DD"
+  index_0_100: number;
+  severity: string;         // "Low|Medium|High|Very High"
+}
+
+interface RecordDirect {
   date: string;
   lat: number;
   lon: number;
@@ -14,104 +29,117 @@ interface PollenForecastData {
   severity: string;
   unit?: string;
   generated_at?: string;
-  details?: Record<string, any>;
+  details?: Record<string, unknown> | null;
 }
 
 serve(async (req) => {
-  // Handle CORS preflight requests
-  if (req.method === 'OPTIONS') {
+  if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const supabaseClient = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
-      {
-        global: {
-          headers: { Authorization: req.headers.get('Authorization')! },
-        },
+    // حماية اختيارية
+    if (INGEST_SECRET) {
+      const auth = req.headers.get("authorization") || "";
+      if (auth !== `Bearer ${INGEST_SECRET}`) {
+        return new Response(JSON.stringify({ error: "Unauthorized" }), {
+          status: 401,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
       }
-    );
+    }
 
     const body = await req.json();
-    console.log('Received request body:', body);
 
-    // Support both single forecast and array of forecasts
-    const forecasts: PollenForecastData[] = Array.isArray(body) ? body : [body];
+    // نقبل شكلين:
+    // 1) Array<RecordDirect>
+    // 2) { lat, lon, unit?, generated_at?, rows: RowV1[] }
+    let records: RecordDirect[] = [];
 
-    // Validate required fields
-    for (const forecast of forecasts) {
-      if (!forecast.date || !forecast.lat || !forecast.lon || forecast.score === undefined || !forecast.severity) {
-        console.error('Missing required fields in forecast:', forecast);
+    if (Array.isArray(body)) {
+      // شكل مباشر
+      records = body;
+    } else if (body?.rows && Array.isArray(body.rows)) {
+      // شكل forecast.json
+      const lat = body.lat ?? 32.556;
+      const lon = body.lon ?? 35.85;
+      const unit = body.unit ?? "index_0_100";
+      const generated_at = body.generated_at ?? new Date().toISOString();
+
+      records = (body.rows as RowV1[]).map((r) => ({
+        date: r.time,
+        lat,
+        lon,
+        score: Number(r.index_0_100),
+        severity: String(r.severity),
+        unit,
+        generated_at,
+        details: null,
+      }));
+    } else {
+      return new Response(JSON.stringify({ error: "Invalid payload format" }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // تحقّق الحقول
+    for (const r of records) {
+      if (
+        !r.date ||
+        typeof r.lat !== "number" ||
+        typeof r.lon !== "number" ||
+        typeof r.score !== "number" ||
+        !r.severity
+      ) {
         return new Response(
-          JSON.stringify({ 
-            error: 'Missing required fields: date, lat, lon, score, and severity are required' 
+          JSON.stringify({
+            error: "Missing required fields: date, lat, lon, score, severity",
           }),
-          {
-            status: 400,
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          }
+          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
       }
     }
 
-    // Prepare data for insertion
-    const dataToInsert = forecasts.map(forecast => ({
-      date: forecast.date,
-      lat: forecast.lat,
-      lon: forecast.lon,
-      score: forecast.score,
-      severity: forecast.severity,
-      unit: forecast.unit || 'index_0_100',
-      generated_at: forecast.generated_at || new Date().toISOString(),
-      details: forecast.details || null,
-    }));
-
-    console.log('Inserting data:', dataToInsert);
-
-    // Insert or update forecast data (upsert based on unique constraint)
-    const { data, error } = await supabaseClient
-      .from('pollen_forecast')
-      .upsert(dataToInsert, {
-        onConflict: 'date,lat,lon',
-        ignoreDuplicates: false,
-      })
+    // upsert حسب (date,lat,lon)
+    const { data, error } = await supabase
+      .from("pollen_forecast")
+      .upsert(
+        records.map((r) => ({
+          date: r.date,
+          lat: Number(r.lat.toFixed?.(4) ?? r.lat),
+          lon: Number(r.lon.toFixed?.(4) ?? r.lon),
+          score: r.score,
+          severity: r.severity,
+          unit: r.unit ?? "index_0_100",
+          generated_at: r.generated_at ?? new Date().toISOString(),
+          details: r.details ?? null,
+        })),
+        { onConflict: "date,lat,lon" }
+      )
       .select();
 
     if (error) {
-      console.error('Database error:', error);
-      return new Response(
-        JSON.stringify({ error: error.message }),
-        {
-          status: 500,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        }
-      );
+      console.error("DB error:", error);
+      return new Response(JSON.stringify({ error: error.message }), {
+        status: 500,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
     }
 
-    console.log('Successfully ingested pollen forecast data:', data);
-
     return new Response(
-      JSON.stringify({ 
-        success: true, 
-        message: `Successfully ingested ${data.length} forecast(s)`,
-        data 
+      JSON.stringify({
+        success: true,
+        message: `Successfully ingested ${data?.length ?? 0} forecast(s)`,
+        data,
       }),
-      {
-        status: 200,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      }
+      { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
-
-  } catch (error: any) {
-    console.error('Error in ingest-pollen-forecast function:', error);
-    return new Response(
-      JSON.stringify({ error: error.message || 'Internal server error' }),
-      {
-        status: 500,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      }
-    );
+  } catch (e: any) {
+    console.error("Function error:", e);
+    return new Response(JSON.stringify({ error: e.message || "Internal server error" }), {
+      status: 500,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
   }
 });
