@@ -85,8 +85,8 @@ export default function ForecastGauge() {
               </linearGradient>
             </defs>
           </svg>
-          <div className="absolute top-16 text-center">
-            <div className="text-xl font-bold mb-2" style={{
+          <div className="absolute top-20 text-center">
+            <div className="text-3xl font-bold mb-2" style={{
               color: sev === 'Low' ? '#22c55e' : sev === 'Medium' ? '#facc15' : '#ef4444'
             }}>
               {sev}
