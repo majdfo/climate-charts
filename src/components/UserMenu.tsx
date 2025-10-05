@@ -1,0 +1,59 @@
+import { useMemo } from "react";
+import { useAuth } from "@/auth/AuthGate";
+import { supabase } from "@/integrations/supabase/client";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+
+export function UserMenu() {
+  const { user } = useAuth();
+
+  const initials = useMemo(() => {
+    const e = user?.email ?? "";
+    if (!e) return "U";
+    const first = e[0]?.toUpperCase() ?? "U";
+    return first;
+  }, [user?.email]);
+
+  const displayName = user?.user_metadata?.name || user?.email?.split("@")[0] || "User";
+
+  const onSignOut = async () => {
+    await supabase.auth.signOut();
+    window.location.href = "/";
+  };
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger className="outline-none">
+        <Avatar className="h-9 w-9 ring-2 ring-primary/30 hover:ring-primary transition">
+          <AvatarFallback className="bg-primary/10 text-primary font-semibold">
+            {initials}
+          </AvatarFallback>
+        </Avatar>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="min-w-[220px]">
+        <DropdownMenuLabel className="leading-tight">
+          <div className="font-semibold">{displayName}</div>
+          <div className="text-xs text-muted-foreground truncate">{user?.email}</div>
+        </DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem onClick={() => (window.location.href = "/dashboard")}>
+          Dashboard
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => (window.location.href = "/trends")}>
+          Trends
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem onClick={onSignOut} className="text-red-600">
+          Sign out
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
