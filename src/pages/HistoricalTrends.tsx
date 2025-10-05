@@ -43,7 +43,7 @@ export default function HistoricalTrends() {
 
       <Card className="mb-6">
         <CardHeader>
-          <CardTitle className="text-center">Season Summary</CardTitle>
+          <CardTitle className="text-center">Decade Summary of Pollen Season</CardTitle>
           <CardDescription className="text-center">
             Pollen season window (start-end) for all years
           </CardDescription>
