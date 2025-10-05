@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { useAuth } from '@/auth/AuthGate'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
-import { TrendingUp, BarChart3, Calendar, Upload } from 'lucide-react'
+import { Flower2, CloudSun, TrendingUp } from 'lucide-react'
 
 export default function Home() {
   const { user, signInWithGoogle } = useAuth()
@@ -19,15 +19,15 @@ export default function Home() {
         <div className="mx-auto max-w-4xl text-center">
           <div className="mb-8 flex justify-center">
             <div className="rounded-full bg-primary/10 p-6">
-              <TrendingUp className="h-16 w-16 text-primary" />
+              <Flower2 className="h-16 w-16 text-primary" />
             </div>
           </div>
 
           <h1 className="mb-4 text-5xl font-bold tracking-tight">
-            Seasonal Trend Analysis
+            BloomWatch
           </h1>
           <p className="mb-8 text-xl text-muted-foreground">
-            Upload your data, detect seasonal patterns, and compare trends across years
+            Track pollen forecasts, weather conditions, and bloom trends for Irbid, Jordan
           </p>
 
           <Button size="lg" onClick={signInWithGoogle} className="gap-2 text-lg px-8 py-6">
@@ -38,11 +38,11 @@ export default function Home() {
             <Card className="border-2">
               <CardContent className="pt-6">
                 <div className="mb-4 flex justify-center">
-                  <Upload className="h-10 w-10 text-primary" />
+                  <Flower2 className="h-10 w-10 text-primary" />
                 </div>
-                <h3 className="mb-2 font-semibold text-lg">Upload CSV Data</h3>
+                <h3 className="mb-2 font-semibold text-lg">Pollen Forecasts</h3>
                 <p className="text-sm text-muted-foreground">
-                  Import your time-series data with flexible column mapping
+                  Real-time pollen level predictions powered by NASA Earth Data
                 </p>
               </CardContent>
             </Card>
@@ -50,11 +50,11 @@ export default function Home() {
             <Card className="border-2">
               <CardContent className="pt-6">
                 <div className="mb-4 flex justify-center">
-                  <Calendar className="h-10 w-10 text-primary" />
+                  <CloudSun className="h-10 w-10 text-primary" />
                 </div>
-                <h3 className="mb-2 font-semibold text-lg">Detect Seasons</h3>
+                <h3 className="mb-2 font-semibold text-lg">Weather Tracking</h3>
                 <p className="text-sm text-muted-foreground">
-                  Automatically identify season start, end, and duration
+                  Current weather conditions and forecasts for Irbid, Jordan
                 </p>
               </CardContent>
             </Card>
@@ -62,11 +62,11 @@ export default function Home() {
             <Card className="border-2">
               <CardContent className="pt-6">
                 <div className="mb-4 flex justify-center">
-                  <BarChart3 className="h-10 w-10 text-primary" />
+                  <TrendingUp className="h-10 w-10 text-primary" />
                 </div>
-                <h3 className="mb-2 font-semibold text-lg">Compare Years</h3>
+                <h3 className="mb-2 font-semibold text-lg">Historical Trends</h3>
                 <p className="text-sm text-muted-foreground">
-                  Visualize trends and identify peak bloom years
+                  Analyze bloom patterns and seasonal trends from 2015-2025
                 </p>
               </CardContent>
             </Card>
