@@ -85,7 +85,7 @@ export default function ForecastGauge() {
               </linearGradient>
             </defs>
           </svg>
-          <div className="absolute top-36 text-center">
+          <div className="absolute top-40 text-center">
             <div className="text-4xl font-bold mb-1" style={{
               color: sev === 'Low' ? '#22c55e' : sev === 'Medium' ? '#facc15' : '#ef4444'
             }}>
@@ -115,7 +115,7 @@ export default function ForecastGauge() {
           return (
             <div
               key={f.date}
-              className="flex justify-between items-center p-4 bg-card rounded-lg shadow-sm border min-w-[400px]"
+              className="flex justify-between items-center p-4 bg-card rounded-lg shadow-sm border min-w-[320px]"
             >
               <span className="font-semibold">{dayjs(f.date).format('dddd, MMM D')}</span>
               <div className="flex items-center gap-4">
