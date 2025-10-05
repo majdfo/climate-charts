@@ -56,6 +56,36 @@ export type Database = {
         }
         Relationships: []
       }
+      pollen_forecast_daily: {
+        Row: {
+          date: string
+          generated_at: string | null
+          lat: number
+          lon: number
+          score: number
+          severity: string
+          unit: string | null
+        }
+        Insert: {
+          date: string
+          generated_at?: string | null
+          lat: number
+          lon: number
+          score: number
+          severity: string
+          unit?: string | null
+        }
+        Update: {
+          date?: string
+          generated_at?: string | null
+          lat?: number
+          lon?: number
+          score?: number
+          severity?: string
+          unit?: string | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string | null
