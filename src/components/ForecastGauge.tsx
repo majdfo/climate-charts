@@ -85,8 +85,8 @@ export default function ForecastGauge() {
               </linearGradient>
             </defs>
           </svg>
-          <div className="absolute top-16 text-center">
-            <div className="text-6xl font-bold mb-2" style={{
+          <div className="absolute top-20 text-center">
+            <div className="text-6xl font-bold mb-1" style={{
               color: sev === 'Low' ? '#22c55e' : sev === 'Medium' ? '#facc15' : '#ef4444'
             }}>
               {sev}
@@ -104,7 +104,7 @@ export default function ForecastGauge() {
       </div>
 
       {/* Daily forecasts - RIGHT SIDE */}
-      <div className="flex-1 w-full max-w-2xl space-y-2">
+      <div className="flex-1 w-full space-y-2">
         <h3 className="text-sm font-semibold text-muted-foreground mb-3 px-1">7-Day Forecast</h3>
         {forecast.map((f) => {
           const dayColor =
@@ -115,7 +115,7 @@ export default function ForecastGauge() {
           return (
             <div
               key={f.date}
-              className="flex justify-between items-center p-4 bg-card rounded-lg shadow-sm border"
+              className="flex justify-between items-center p-4 bg-card rounded-lg shadow-sm border min-w-[500px]"
             >
               <span className="font-semibold">{dayjs(f.date).format('dddd, MMM D')}</span>
               <div className="flex items-center gap-4">
