@@ -60,7 +60,7 @@ export default function PollenDashboard() {
   const angleRad = (angleDeg * Math.PI) / 180
   const markerR = R - 6
   const markerX = cx + markerR * Math.cos(angleRad)
-  const markerY = cy - markerR * Math.sin(angleRad) - 6 // ⬆ رفعناها شوي لتصير فوق المؤشر بالضبط
+  const markerY = cy - markerR * Math.sin(angleRad) - 6
 
   const sevColor =
     sev === 'Low' ? '#22c55e' :
@@ -79,7 +79,9 @@ export default function PollenDashboard() {
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-4">
-    
+      <h1 className="text-5xl font-extrabold text-center mb-6">
+        🌸 FloraSat – Irbid, Jordan
+      </h1>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
         {/* LEFT: Gauge */}
@@ -89,8 +91,10 @@ export default function PollenDashboard() {
             <span>Allergy Severity Meter</span>
           </h2>
 
+          {/* Gauge */}
           <div className="relative w-96 h-56 mx-auto lg:mx-0">
             <svg width="380" height="200" viewBox="0 0 380 200" className="overflow-visible">
+              {/* Background arc */}
               <path
                 d="M 50 170 A 140 140 0 0 1 330 170"
                 stroke="#e5e7eb"
@@ -98,6 +102,7 @@ export default function PollenDashboard() {
                 fill="none"
                 strokeLinecap="round"
               />
+              {/* Foreground arc */}
               <path
                 d="M 50 170 A 140 140 0 0 1 330 170"
                 stroke="url(#pollenGradient)"
@@ -129,22 +134,27 @@ export default function PollenDashboard() {
               </g>
             </svg>
 
-            {/* Severity text lowered */}
-            <div className="absolute left-1/2 top-[120px] -translate-x-1/2 text-center pointer-events-none">
+            {/* Severity text */}
+            <div className="absolute left-1/2 top-[125px] -translate-x-1/2 text-center pointer-events-none">
               <div className="text-4xl font-extrabold" style={{ color: sevColor }}>
                 {sev}
               </div>
             </div>
           </div>
 
-          {/* Advice box */}
-          <div className="mt-4 max-w-md rounded-lg border bg-white/70 p-3 text-sm leading-6">
-            <span className="font-semibold" style={{ color: sevColor }}>التوصية: </span>
-            <span className="text-gray-700">{advice}</span>
+          {/* Advice box centered */}
+          <div className="mt-5 flex justify-center">
+            <div
+              dir="rtl"
+              className="max-w-md text-right rounded-lg border bg-white/70 p-3 text-sm leading-6"
+            >
+              <span className="font-semibold" style={{ color: sevColor }}>التوصية: </span>
+              <span className="text-gray-700">{advice}</span>
+            </div>
           </div>
         </section>
 
-        {/* RIGHT: List */}
+        {/* RIGHT: Forecast list */}
         <section className="w-full">
           <div className="flex items-center justify-between mb-2">
             <span className="text-[11px] leading-none tracking-wide uppercase opacity-70">
