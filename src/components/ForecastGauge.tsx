@@ -86,7 +86,7 @@ export default function ForecastGauge() {
             </defs>
           </svg>
           <div className="absolute top-16 text-center">
-            <div className="text-6xl font-bold mb-2" style={{
+            <div className="text-4xl font-bold mb-2" style={{
               color: sev === 'Low' ? '#22c55e' : sev === 'Medium' ? '#facc15' : '#ef4444'
             }}>
               {sev}
