@@ -14,6 +14,45 @@ export type Database = {
   }
   public: {
     Tables: {
+      pollen_forecast: {
+        Row: {
+          created_at: string | null
+          date: string
+          details: Json | null
+          generated_at: string | null
+          id: number
+          lat: number
+          lon: number
+          score: number
+          severity: string
+          unit: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          date: string
+          details?: Json | null
+          generated_at?: string | null
+          id?: number
+          lat: number
+          lon: number
+          score: number
+          severity: string
+          unit?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          date?: string
+          details?: Json | null
+          generated_at?: string | null
+          id?: number
+          lat?: number
+          lon?: number
+          score?: number
+          severity?: string
+          unit?: string | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string | null
