@@ -53,17 +53,13 @@ export default function PollenDashboard() {
     sev === 'Medium' ? 5 :
     sev === 'High' ? 8 : 10
 
-  // ——— Gauge geometry (must match the SVG arc) ———
-  const cx = 190       // center x
-  const cy = 170       // center y
-  const R  = 140       // radius
+  // —— Gauge geometry (matches path below) ——
+  const cx = 190, cy = 170, R = 140
   const pct = Math.max(0, Math.min(100, Math.round(today.score ?? 0)))
-
-  // 0..100% -> 180..0 degrees (left -> right)
+  // marker at end of percentage arc (0..100 -> 180..0 deg)
   const angleDeg = 180 - (pct / 100) * 180
   const angleRad = (angleDeg * Math.PI) / 180
-
-  // move the marker slightly inward and a bit down so it sits nicely on the arc
+  // slight inward & downward nudge so it sits nicely on the arc
   const markerR = R - 6
   const markerX = cx + markerR * Math.cos(angleRad)
   const markerY = cy - markerR * Math.sin(angleRad) + 4
@@ -72,25 +68,23 @@ export default function PollenDashboard() {
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-6">
-      {/* Header: make site title big */}
-      <header className="mb-4 flex items-center justify-between">
-        <h3 className="text-4xl font-bold">
+      {/* BIG centered title */}
+      <header className="mb-6">
+        <h1 className="text-5xl font-extrabold text-center">
           🌸 FloraSat – Irbid, Jordan
-        </h3>
-        <div className="text-sm text-muted-foreground">7-Day Forecast</div>
+        </h1>
       </header>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
-        {/* LEFT: section title (smaller) + gauge */}
+        {/* LEFT: smaller section title + gauge */}
         <section>
-          {/* smaller section title as requested */}
-          <h2 className="text-xl font-semibold flex items-center gap-3 mb-3">
+          <h2 className="text-lg font-semibold flex items-center gap-3 mb-3 justify-center lg:justify-start">
             <span>Today&apos;s Forecast</span>
             <span>Allergy Severity Meter</span>
           </h2>
 
           {/* Gauge */}
-          <div className="relative w-96 h-48">
+          <div className="relative w-96 h-48 mx-auto lg:mx-0">
             <svg width="380" height="200" viewBox="0 0 380 200" className="overflow-visible">
               {/* Background arc */}
               <path
@@ -117,7 +111,7 @@ export default function PollenDashboard() {
                 </linearGradient>
               </defs>
 
-              {/* Percentage marker on arc end */}
+              {/* Percentage marker – centered text, at arc end */}
               <g>
                 <circle cx={markerX} cy={markerY} r="16" className="fill-white drop-shadow" />
                 <text
@@ -132,22 +126,22 @@ export default function PollenDashboard() {
               </g>
             </svg>
 
-            {/* Severity label in center */}
+            {/* Severity word */}
             <div className="absolute left-1/2 top-[88px] -translate-x-1/2 -translate-y-1/2 text-center pointer-events-none">
               <div className="text-4xl font-extrabold mb-1" style={{ color: sevColor }}>
                 {sev}
               </div>
             </div>
           </div>
-
-          {/* removed date under the gauge */}
         </section>
 
-        {/* RIGHT: list cards */}
+        {/* RIGHT: list + headers on the LEFT */}
         <section className="w-full">
-          <div className="flex items-baseline justify-between mb-2">
-            <h3 className="sr-only">Forecast List</h3>
-            <span className="ml-auto text-[11px] leading-none tracking-wide uppercase opacity-70">
+          <div className="flex items-center gap-3 mb-2">
+            <span className="text-[11px] leading-none tracking-wide uppercase opacity-70">
+              7-Day Forecast
+            </span>
+            <span className="text-[11px] leading-none tracking-wide uppercase opacity-70">
               Pollen Emission Percentage
             </span>
           </div>
