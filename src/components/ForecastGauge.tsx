@@ -75,20 +75,22 @@ export default function PollenDashboard() {
       ? 'التعرّض عالي اليوم: قلّل الأنشطة الخارجية، استخدم كمامة عند الخروج، وأغلق النوافذ وقت الرياح. لمرضى الحساسية: راقب الأعراض وخذ الدواء الوقائي.'
       : sev === 'Medium'
       ? 'الأنشطة الخارجية ممكنة مع الحذر؛ تجنّب فترات الذروة (الظهر/الرياح)، واغلق النوافذ عند الحاجة.'
-      : 'مستوى منخفض: الأنشطة الخارجية طبيعية، مع الانتباه عند تغيّر الطقس أو وجود رياح قوية.'
+      : '  الأنشطة الخارجية طبيعية، مع الانتباه عند تغيّر الطقس أو وجود رياح قوية.'
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-4">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
-        {/* LEFT: Gauge */}
-        <section className="flex flex-col items-center lg:items-start">
-          <h2 className="text-lg font-semibold flex items-center gap-3 mb-3 justify-center lg:justify-start">
+        
+        {/* LEFT SIDE */}
+        <section className="flex flex-col items-center w-full">
+          {/* Title */}
+          <h2 className="text-lg font-semibold flex items-center gap-3 mb-4 text-center">
             <span>Today&apos;s Forecast</span>
             <span>Allergy Severity Meter</span>
           </h2>
 
           {/* Gauge */}
-          <div className="relative w-96 h-56 flex justify-center">
+          <div className="relative w-[380px] h-[230px] flex justify-center items-center">
             <svg width="380" height="200" viewBox="0 0 380 200" className="overflow-visible">
               {/* Background arc */}
               <path
@@ -130,28 +132,32 @@ export default function PollenDashboard() {
               </g>
             </svg>
 
-            {/* Severity text */}
-            <div className="absolute top-[125px] text-center pointer-events-none">
+            {/* Severity label */}
+            <div className="absolute top-[135px] text-center pointer-events-none">
               <div className="text-4xl font-extrabold" style={{ color: sevColor }}>
                 {sev}
               </div>
             </div>
           </div>
 
-          {/* Advice box centered under gauge */}
+          {/* Advice box - perfectly centered */}
           <div className="mt-6 flex justify-center w-full">
             <div
               dir="rtl"
-              className="max-w-md w-fit text-right rounded-lg border bg-white/80 shadow-md p-3 text-sm leading-6"
-              style={{ textAlign: 'right', direction: 'rtl', lineHeight: '1.8em' }}
+              className="max-w-md text-right rounded-lg border bg-white/80 shadow-md p-3 text-sm leading-6 text-gray-700"
+              style={{
+                direction: 'rtl',
+                textAlign: 'right',
+                lineHeight: '1.8em',
+              }}
             >
               <span className="font-semibold" style={{ color: sevColor }}>التوصية: </span>
-              <span className="text-gray-700">{advice}</span>
+              <span>{advice}</span>
             </div>
           </div>
         </section>
 
-        {/* RIGHT: Forecast list */}
+        {/* RIGHT SIDE */}
         <section className="w-full">
           <div className="flex items-center justify-between mb-2">
             <span className="text-[11px] leading-none tracking-wide uppercase opacity-70">
