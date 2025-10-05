@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { AlertCircle, Play } from 'lucide-react';
+import { AlertCircle, Play, TrendingUp } from 'lucide-react';
 import { CSVUploader } from '@/components/trends/CSVUploader';
 import { ColumnMapper } from '@/components/trends/ColumnMapper';
 import { SettingsPanel } from '@/components/trends/SettingsPanel';
@@ -106,86 +107,65 @@ export default function Trends() {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold">Trend Analysis</h1>
-        <p className="text-muted-foreground">Upload data and analyze seasonal patterns</p>
+        <h1 className="text-3xl font-bold">Custom Trend Analysis - Coming Soon</h1>
+        <p className="text-muted-foreground">Upload your own data and analyze seasonal patterns</p>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-3">
-        <div className="lg:col-span-1 space-y-6">
-          <CSVUploader onDataLoaded={handleDataLoaded} />
-          
-          {columns.length > 0 && (
-            <>
-              <ColumnMapper
-                columns={columns}
-                dateColumn={dateColumn}
-                valueColumn={valueColumn}
-                locationColumn={locationColumn}
-                onDateColumnChange={setDateColumn}
-                onValueColumnChange={setValueColumn}
-                onLocationColumnChange={setLocationColumn}
-              />
-              
-              <SettingsPanel settings={settings} onSettingsChange={setSettings} />
-              
-              <Button
-                onClick={runAnalysis}
-                disabled={!dateColumn || !valueColumn || isAnalyzing}
-                className="w-full gap-2"
-                size="lg"
-              >
-                <Play className="h-4 w-4" />
-                {isAnalyzing ? 'Analyzing...' : 'Run Analysis'}
-              </Button>
-            </>
-          )}
-        </div>
+      <Card className="max-w-3xl mx-auto">
+        <CardHeader>
+          <CardTitle>Feature Under Development</CardTitle>
+          <CardDescription>
+            We're working on making BloomWatch scalable for all locations
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="bg-muted p-6 rounded-lg">
+            <h3 className="font-semibold text-lg mb-3">Currently Available</h3>
+            <p className="text-sm text-muted-foreground mb-2">
+              BloomWatch currently provides pollen tracking and historical data for <strong>Irbid, Jordan</strong>.
+            </p>
+            <p className="text-sm text-muted-foreground">
+              View current forecasts on the Dashboard and explore 10 years of historical pollen trends.
+            </p>
+          </div>
 
-        <div className="lg:col-span-2 space-y-6">
-          {warnings.length > 0 && (
-            <Alert>
-              <AlertCircle className="h-4 w-4" />
-              <AlertDescription>
-                <p className="font-medium mb-2">Data Warnings ({warnings.length}):</p>
-                <ul className="text-sm space-y-1">
-                  {warnings.slice(0, 5).map((warning, i) => (
-                    <li key={i}>{warning}</li>
-                  ))}
-                  {warnings.length > 5 && (
-                    <li className="text-muted-foreground">
-                      ... and {warnings.length - 5} more
-                    </li>
-                  )}
-                </ul>
-              </AlertDescription>
-            </Alert>
-          )}
+          <div className="bg-primary/5 p-6 rounded-lg border-2 border-primary/20">
+            <h3 className="font-semibold text-lg mb-3 flex items-center gap-2">
+              <span>🚀</span> Coming Soon: Custom Location Analysis
+            </h3>
+            <p className="text-sm text-muted-foreground mb-4">
+              We're developing scalability features that will allow you to:
+            </p>
+            <ul className="text-sm text-muted-foreground space-y-2 list-disc list-inside">
+              <li>Upload your own location data</li>
+              <li>Analyze CSV files with weather factors and EVI (Enhanced Vegetation Index) data</li>
+              <li>Generate personalized dashboards for your specific region</li>
+              <li>Access historical trends customized to your location</li>
+              <li>Compare seasonal patterns across different years</li>
+            </ul>
+          </div>
 
-          {results.length > 0 ? (
-            <Tabs defaultValue="table" className="w-full">
-              <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="table">Season Table</TabsTrigger>
-                <TabsTrigger value="charts">Charts</TabsTrigger>
-              </TabsList>
-              
-              <TabsContent value="table" className="space-y-6">
-                <SeasonTable results={results} />
-              </TabsContent>
-              
-              <TabsContent value="charts" className="space-y-6">
-                <TopYearsBar results={results} />
-              </TabsContent>
-            </Tabs>
-          ) : (
-            <div className="flex items-center justify-center h-96 border-2 border-dashed rounded-lg">
-              <div className="text-center text-muted-foreground">
-                <p className="text-lg font-medium">No analysis results yet</p>
-                <p className="text-sm">Upload data and run analysis to see results</p>
-              </div>
+          <div className="pt-4">
+            <h4 className="font-medium text-sm mb-2">Required CSV Format (Future)</h4>
+            <p className="text-xs text-muted-foreground mb-3">
+              Your CSV should include: date, pollen values, weather factors (temperature, humidity, precipitation), and EVI data
+            </p>
+            <div className="bg-muted/50 p-3 rounded font-mono text-xs">
+              <div>date,pollen_value,temperature,humidity,precipitation,evi</div>
+              <div>2024-01-01,42.5,15.2,65.0,0.0,0.45</div>
+              <div>2024-01-02,45.2,16.1,62.0,2.5,0.47</div>
             </div>
-          )}
-        </div>
-      </div>
+          </div>
+
+          <div className="flex gap-4 pt-4">
+            <Button disabled className="flex-1">
+              <TrendingUp className="h-4 w-4 mr-2" />
+              Upload Data (Coming Soon)
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
     </div>
   );
 }
