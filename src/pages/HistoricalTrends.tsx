@@ -36,7 +36,7 @@ export default function HistoricalTrends() {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold">Historical Jordan Pollen Trends</h1>
+        <h1 className="text-3xl font-bold">Historical Trends - Irbid</h1>
         <p className="text-muted-foreground">Pollen season patterns from 2015 to 2025</p>
       </div>
 

@@ -4,7 +4,7 @@ import { supabase } from '@/integrations/supabase/client'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Link } from 'react-router-dom'
-import { TrendingUp, Calendar } from 'lucide-react'
+import { TrendingUp, Calendar, History as HistoryIcon } from 'lucide-react'
 import { WeatherBloomPanel } from '@/components/WeatherBloomPanel'
 import ForecastGauge from '@/components/ForecastGauge'
 
@@ -45,23 +45,42 @@ export default function Dashboard() {
           <WeatherBloomPanel lat={32.55} lon={35.81} />
         </div>
 
-        {/* زر الانتقال للـ Trends */}
-        <Card className="mt-6">
-          <CardHeader>
-            <CardTitle>Get Started with Trend Analysis</CardTitle>
-            <CardDescription>
-              Upload your data and start analyzing seasonal patterns
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Link to="/trends">
-              <Button className="gap-2">
-                <TrendingUp className="h-4 w-4" />
-                Go to Trends
-              </Button>
-            </Link>
-          </CardContent>
-        </Card>
+        {/* Cards for navigation */}
+        <div className="grid gap-6 md:grid-cols-2">
+          <Card>
+            <CardHeader>
+              <CardTitle>View Historical Trends - Irbid</CardTitle>
+              <CardDescription>
+                Explore pollen season patterns from 2015 to 2025
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Link to="/historical-trends">
+                <Button className="gap-2">
+                  <HistoryIcon className="h-4 w-4" />
+                  View Historical Data
+                </Button>
+              </Link>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Get Started with Trend Analysis</CardTitle>
+              <CardDescription>
+                Upload your data and start analyzing seasonal patterns
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Link to="/trends">
+                <Button className="gap-2">
+                  <TrendingUp className="h-4 w-4" />
+                  Go to Trends
+                </Button>
+              </Link>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </div>
   )
