@@ -74,9 +74,9 @@ export default function PollenDashboard() {
     <div className="mx-auto max-w-6xl px-4 py-6">
       {/* Header: make site title big */}
       <header className="mb-4 flex items-center justify-between">
-        <h1 className="text-4xl font-bold">
+        <h3 className="text-4xl font-bold">
           🌸 FloraSat – Irbid, Jordan
-        </h1>
+        </h3>
         <div className="text-sm text-muted-foreground">7-Day Forecast</div>
       </header>
 
