@@ -1,1 +1,4 @@
 project_id = "wcmozfwiiykiusvxzsev"
+
+[functions.ingest-pollen-forecast]
+verify_jwt = false
