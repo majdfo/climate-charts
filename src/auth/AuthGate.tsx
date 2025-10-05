@@ -20,6 +20,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (!auth || !db) {
+      setLoading(false);
+      return;
+    }
+
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       setUser(firebaseUser);
       
@@ -38,6 +43,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const signInWithGoogle = async () => {
+    if (!auth || !db) {
+      toast({
+        title: 'Firebase not configured',
+        description: 'Please add Firebase credentials to continue.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
     try {
       const result = await signInWithPopup(auth, provider);
       
@@ -74,6 +88,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const signOut = async () => {
+    if (!auth) {
+      return;
+    }
+
     try {
       await firebaseSignOut(auth);
       toast({
