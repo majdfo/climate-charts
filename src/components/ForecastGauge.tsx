@@ -84,9 +84,9 @@ export default function PollenDashboard() {
         {/* LEFT SIDE */}
         <section className="flex flex-col items-center w-full">
           {/* Title */}
-          <h2 className="text-lg font-semibold flex items-center gap-3 mb-4 text-center">
+          <h2 className="text-base font-normal flex items-center gap-3 mb-4 text-center">
             <span>Today&apos;s Forecast</span>
-            <span>Allergy Severity Meter</span>
+            <span className="transition-transform duration-200 hover:scale-105">Allergy Severity Meter</span>
           </h2>
 
           {/* Gauge */}
