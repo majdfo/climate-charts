@@ -162,7 +162,7 @@ export default function PollenDashboard() {
                 lineHeight: '1.8em',
               }}
             >
-              <span className="font-semibold" style={{ color: sevColor }}>التوصية: </span>
+              <span className="font-semibold" style={{ color: sevColor }}>Tip: </span>
               <span>{advice}</span>
             </div>
           </div>
