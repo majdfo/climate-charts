@@ -1,4 +1,4 @@
-import { supabase } from '@/integrations/supabase/client';
+import Papa from 'papaparse';
 
 export type ForecastRow = {
   date: string;
@@ -14,16 +14,26 @@ export async function fetchNext7Days(lat: number, lon: number) {
   const from = today.toISOString().slice(0, 10);
   const to = end.toISOString().slice(0, 10);
 
-  const { data, error } = await supabase
-    .from('pollen_forecast_daily')
-    .select('date, lat, lon, score, severity')
-    .eq('lat', lat)
-    .eq('lon', lon)
-    .gte('date', from)
-    .lte('date', to)
-    .order('date', { ascending: true });
-
-  if (error) throw error;
-  return (data ?? []) as ForecastRow[];
+  const response = await fetch('/pollen_forecast_daily_rows.csv');
+  const csvText = await response.text();
+  
+  return new Promise<ForecastRow[]>((resolve, reject) => {
+    Papa.parse(csvText, {
+      header: true,
+      dynamicTyping: true,
+      complete: (results) => {
+        const data = results.data as ForecastRow[];
+        const filtered = data.filter(row => 
+          row.date && 
+          row.lat === lat && 
+          row.lon === lon &&
+          row.date >= from && 
+          row.date <= to
+        );
+        resolve(filtered);
+      },
+      error: (error) => reject(error)
+    });
+  });
 }
 
