@@ -55,51 +55,58 @@ export default function ForecastGauge() {
     sev === 'High' ? 8 : 10
 
   return (
-    <div className="flex flex-col items-center">
-      {/* Half circle gauge for today */}
-      <div className="relative w-72 h-40 flex items-end justify-center">
-        <svg width="280" height="160" viewBox="0 0 280 160" className="overflow-visible">
-          {/* Background arc */}
-          <path
-            d="M 40 140 A 100 100 0 0 1 240 140"
-            stroke="#e5e7eb"            // use a fixed color instead of var(--muted) for reliability
-            strokeWidth="20"
-            fill="none"
-            strokeLinecap="round"
-          />
-          {/* Foreground colored arc */}
-          <path
-            d="M 40 140 A 100 100 0 0 1 240 140"
-            stroke="url(#pollenGradient)"
-            strokeWidth="20"
-            fill="none"
-            strokeDasharray={`${(sevVal / 10) * 314}, 314`}
-            strokeLinecap="round"
-          />
-          <defs>
-            <linearGradient id="pollenGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="#22c55e" />
-              <stop offset="50%" stopColor="#facc15" />
-              <stop offset="100%" stopColor="#ef4444" />
-            </linearGradient>
-          </defs>
-        </svg>
-        <div className="absolute bottom-8 text-center">
-          <div className="text-5xl font-bold" style={{
-            color: sev === 'Low' ? '#22c55e' : sev === 'Medium' ? '#facc15' : '#ef4444'
-          }}>
-            {sev}
-          </div>
-          <div className="text-sm text-muted-foreground mt-1">
-            {dayjs(today.date).format('MMM D, YYYY')}
+    <div className="flex flex-col lg:flex-row gap-8 items-start">
+      {/* Half circle gauge for today - LEFT SIDE */}
+      <div className="flex flex-col items-center flex-shrink-0">
+        <div className="relative w-96 h-52 flex items-end justify-center">
+          <svg width="380" height="220" viewBox="0 0 380 220" className="overflow-visible">
+            {/* Background arc */}
+            <path
+              d="M 50 190 A 140 140 0 0 1 330 190"
+              stroke="#e5e7eb"
+              strokeWidth="28"
+              fill="none"
+              strokeLinecap="round"
+            />
+            {/* Foreground colored arc */}
+            <path
+              d="M 50 190 A 140 140 0 0 1 330 190"
+              stroke="url(#pollenGradient)"
+              strokeWidth="28"
+              fill="none"
+              strokeDasharray={`${(sevVal / 10) * 440}, 440`}
+              strokeLinecap="round"
+            />
+            <defs>
+              <linearGradient id="pollenGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor="#22c55e" />
+                <stop offset="50%" stopColor="#facc15" />
+                <stop offset="100%" stopColor="#ef4444" />
+              </linearGradient>
+            </defs>
+          </svg>
+          <div className="absolute bottom-12 text-center">
+            <div className="text-6xl font-bold" style={{
+              color: sev === 'Low' ? '#22c55e' : sev === 'Medium' ? '#facc15' : '#ef4444'
+            }}>
+              {sev}
+            </div>
+            {today.score !== undefined && (
+              <div className="text-2xl font-semibold text-muted-foreground mt-2">
+                {today.score}%
+              </div>
+            )}
+            <div className="text-sm text-muted-foreground mt-1">
+              {dayjs(today.date).format('MMM D, YYYY')}
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Next days forecast */}
-      <div className="w-full max-w-md mt-8 space-y-2">
-        <h3 className="text-sm font-semibold text-muted-foreground mb-3 px-1">Next Days</h3>
-        {forecast.slice(1).map((f) => {
+      {/* Daily forecasts - RIGHT SIDE */}
+      <div className="flex-1 w-full space-y-2">
+        <h3 className="text-sm font-semibold text-muted-foreground mb-3 px-1">7-Day Forecast</h3>
+        {forecast.map((f) => {
           const dayColor =
             f.severity === 'Low' ? 'text-green-600' :
             f.severity === 'Medium' ? 'text-yellow-600' :
@@ -111,7 +118,12 @@ export default function ForecastGauge() {
               className="flex justify-between items-center p-4 bg-card rounded-lg shadow-sm border"
             >
               <span className="font-semibold">{dayjs(f.date).format('dddd, MMM D')}</span>
-              <span className={`font-bold ${dayColor}`}>{f.severity}</span>
+              <div className="flex items-center gap-4">
+                {f.score !== undefined && (
+                  <span className="text-sm text-muted-foreground">{f.score}%</span>
+                )}
+                <span className={`font-bold ${dayColor}`}>{f.severity}</span>
+              </div>
             </div>
           )
         })}
