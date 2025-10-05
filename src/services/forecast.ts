@@ -4,7 +4,7 @@ export type ForecastRow = {
   date: string;
   lat: number;
   lon: number;
-  index_0_100: number | null;
+  score: number | null;
   severity: string | null;
 };
 
@@ -16,7 +16,7 @@ export async function fetchNext7Days(lat: number, lon: number) {
 
   const { data, error } = await supabase
     .from('pollen_forecast_daily')
-    .select('date, lat, lon, index_0_100, severity')
+    .select('date, lat, lon, score, severity')
     .eq('lat', lat)
     .eq('lon', lon)
     .gte('date', from)
