@@ -86,7 +86,7 @@ export default function ForecastGauge() {
             </defs>
           </svg>
           <div className="absolute top-16 text-center">
-            <div className="text-4xl font-bold mb-2" style={{
+            <div className="text-6xl font-bold mb-2" style={{
               color: sev === 'Low' ? '#22c55e' : sev === 'Medium' ? '#facc15' : '#ef4444'
             }}>
               {sev}
@@ -104,7 +104,7 @@ export default function ForecastGauge() {
       </div>
 
       {/* Daily forecasts - RIGHT SIDE */}
-      <div className="flex-1 w-full space-y-2">
+      <div className="flex-1 w-full max-w-2xl space-y-2">
         <h3 className="text-sm font-semibold text-muted-foreground mb-3 px-1">7-Day Forecast</h3>
         {forecast.map((f) => {
           const dayColor =
