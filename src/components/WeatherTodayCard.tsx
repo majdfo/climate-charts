@@ -1,90 +1,63 @@
-import { useEffect, useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { fetchWeatherData, WeatherData } from '@/services/weather';
-import { Cloud, Droplets, Thermometer } from 'lucide-react';
+import { useQuery } from "@tanstack/react-query";
+import { fetchTodayWeather } from "@/services/weather";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-interface WeatherTodayCardProps {
+export function WeatherTodayCard({
+  lat,
+  lon,
+  title = "Today's Weather",
+}: {
   lat: number;
   lon: number;
   title?: string;
-}
-
-export function WeatherTodayCard({ lat, lon, title = "Today's Weather" }: WeatherTodayCardProps) {
-  const [weather, setWeather] = useState<WeatherData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const loadWeather = async () => {
-      try {
-        setLoading(true);
-        const data = await fetchWeatherData(lat, lon);
-        setWeather(data);
-        setError(null);
-      } catch (err) {
-        setError('Failed to load weather data');
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadWeather();
-  }, [lat, lon]);
-
-  if (loading) {
-    return (
-      <Card>
-        <CardHeader>
-          <CardTitle>{title}</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-muted-foreground">Loading weather...</p>
-        </CardContent>
-      </Card>
-    );
-  }
-
-  if (error || !weather) {
-    return (
-      <Card>
-        <CardHeader>
-          <CardTitle>{title}</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-destructive">Unable to load weather data</p>
-        </CardContent>
-      </Card>
-    );
-  }
+}) {
+  const { data, isLoading, isError, error, refetch, isFetching } = useQuery({
+    queryKey: ["weather-today", lat, lon],
+    queryFn: () => fetchTodayWeather(lat, lon, "auto"),
+    staleTime: 15 * 60 * 1000,
+  });
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle>{title}</CardTitle>
+      <CardHeader className="flex items-center justify-between">
+        <CardTitle className="text-base">{title}</CardTitle>
+        <button
+          onClick={() => refetch()}
+          className="text-xs underline opacity-80 hover:opacity-100"
+          disabled={isFetching}
+        >
+          {isFetching ? "Refreshing..." : "Refresh"}
+        </button>
       </CardHeader>
       <CardContent>
-        <div className="flex items-center justify-between">
-          <div className="space-y-2">
-            <div className="flex items-center gap-2">
-              <Thermometer className="h-5 w-5 text-muted-foreground" />
-              <span className="text-3xl font-bold">{weather.temp}°C</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Cloud className="h-4 w-4 text-muted-foreground" />
-              <span className="text-sm text-muted-foreground capitalize">{weather.description}</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Droplets className="h-4 w-4 text-muted-foreground" />
-              <span className="text-sm text-muted-foreground">Humidity: {weather.humidity}%</span>
-            </div>
+        {isLoading && <div className="opacity-70">Loading weather…</div>}
+        {isError && (
+          <div className="text-sm text-red-500">Failed: {(error as Error)?.message}</div>
+        )}
+        {data && !isLoading && !isError && (
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+            <Stat label="Max Temp" value={fmt(data.tMax, "°C")} />
+            <Stat label="Min Temp" value={fmt(data.tMin, "°C")} />
+            <Stat label="Precip" value={fmt(data.precipSum, "mm")} />
+            <Stat label="Wind Max" value={fmt(data.windMax, "km/h")} />
+            <Stat label="Avg Humidity" value={fmt(data.humidityAvg, "%")} />
           </div>
-          <div className="text-right space-y-1">
-            <p className="text-sm text-muted-foreground">Feels like {weather.feels_like}°C</p>
-            <p className="text-sm text-muted-foreground">H: {weather.temp_max}° L: {weather.temp_min}°</p>
-          </div>
-        </div>
+        )}
       </CardContent>
     </Card>
   );
+}
+
+function Stat({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-xl border p-3">
+      <div className="text-[11px] uppercase opacity-70">{label}</div>
+      <div className="text-lg font-semibold">{value}</div>
+    </div>
+  );
+}
+
+function fmt(n: number | null, s = "") {
+  if (n === null || Number.isNaN(n)) return "N/A";
+  return `${Math.round(n * 10) / 10}${s}`;
 }
