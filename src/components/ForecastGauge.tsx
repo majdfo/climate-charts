@@ -86,16 +86,16 @@ export default function ForecastGauge() {
             </defs>
           </svg>
           <div className="absolute top-16 text-center">
-            <div className="text-5xl font-bold" style={{
+            {today.score !== undefined && (
+              <div className="text-5xl font-bold text-muted-foreground">
+                {Math.round(today.score)}%
+              </div>
+            )}
+            <div className="text-2xl font-semibold mt-2" style={{
               color: sev === 'Low' ? '#22c55e' : sev === 'Medium' ? '#facc15' : '#ef4444'
             }}>
               {sev}
             </div>
-            {today.score !== undefined && (
-              <div className="text-2xl font-semibold text-muted-foreground mt-2">
-                {Math.round(today.score)}%
-              </div>
-            )}
           </div>
         </div>
         <div className="text-sm text-muted-foreground mt-2">
