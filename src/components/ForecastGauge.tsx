@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { supabase } from '@/integrations/supabase/client'
+import Papa from 'papaparse'
 import dayjs from 'dayjs'
 
 type Forecast = {
@@ -8,7 +8,7 @@ type Forecast = {
   unit: string
   lat: number
   lon: number
-  // score?: number  // uncomment if your table has this column
+  score?: number
 }
 
 export default function ForecastGauge() {
@@ -19,21 +19,25 @@ export default function ForecastGauge() {
   useEffect(() => {
     (async () => {
       try {
-        // DEBUG QUERY: prove the REST API works
-        // If rows appear here, the connection is good.
-        const { data, error } = await supabase
-          .from('public.pollen_forecast_daily')
-          .select('*') // or .select('date, lat, lon, severity, unit') if you prefer
-          .order('date', { ascending: true })
-          .limit(7)
-
-        console.log('rows:', data?.length, 'first:', data?.[0], 'error:', error)
-
-        if (error) throw error
-        setForecast(data ?? [])
+        const response = await fetch('/pollen_forecast_daily_rows.csv')
+        const csvText = await response.text()
+        
+        Papa.parse(csvText, {
+          header: true,
+          dynamicTyping: true,
+          complete: (results) => {
+            const data = results.data as Forecast[]
+            const validData = data.filter(row => row.date && row.severity)
+            setForecast(validData)
+            setLoading(false)
+          },
+          error: (error) => {
+            setErrMsg(error.message)
+            setLoading(false)
+          }
+        })
       } catch (e: any) {
         setErrMsg(e?.message || 'Unknown error')
-      } finally {
         setLoading(false)
       }
     })()
