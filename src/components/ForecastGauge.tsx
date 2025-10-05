@@ -17,11 +17,18 @@ export default function ForecastGauge() {
   useEffect(() => {
     async function loadForecast() {
       const today = dayjs().format('YYYY-MM-DD')
+      // const { data, error } = await supabase
+      //   .from('pollen_forecast_daily')
+      //   .select('*')
+      //   .gte('date', today)
+      //   .order('date', { ascending: true })
       const { data, error } = await supabase
-        .from('pollen_forecast_daily')
-        .select('*')
-        .gte('date', today)
-        .order('date', { ascending: true })
+  .from('public.pollen_forecast_daily') // include schema just in case
+  .select('*')
+  .order('date', { ascending: true })
+  .limit(7)
+console.log({ error, rows: data?.length, first: data?.[0] })
+
 
       if (error) console.error(error)
       setForecast(data ?? [])
