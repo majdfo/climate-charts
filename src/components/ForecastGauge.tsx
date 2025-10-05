@@ -53,13 +53,12 @@ export default function PollenDashboard() {
     sev === 'Medium' ? 5 :
     sev === 'High' ? 8 : 10
 
-  // —— Gauge geometry (matches path below) ——
   const cx = 190, cy = 170, R = 140
   const pct = Math.max(0, Math.min(100, Math.round(today.score ?? 0)))
-  // marker at end of percentage arc (0..100 -> 180..0 deg)
+
   const angleDeg = 180 - (pct / 100) * 180
   const angleRad = (angleDeg * Math.PI) / 180
-  // slight inward & downward nudge so it sits nicely on the arc
+
   const markerR = R - 6
   const markerX = cx + markerR * Math.cos(angleRad)
   const markerY = cy - markerR * Math.sin(angleRad) + 4
@@ -67,16 +66,14 @@ export default function PollenDashboard() {
   const sevColor = sev === 'Low' ? '#22c55e' : sev === 'Medium' ? '#facc15' : '#ef4444'
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-6">
-      {/* BIG centered title */}
-      <header className="mb-6">
-        <h1 className="text-5xl font-extrabold text-center">
-          🌸 FloraSat – Irbid, Jordan
-        </h1>
-      </header>
+    <div className="mx-auto max-w-6xl px-4 py-4">
+      {/* العنوان الكبير فوق */}
+      <h1 className="text-5xl font-extrabold text-center mb-6">
+        🌸 FloraSat – Irbid, Jordan
+      </h1>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
-        {/* LEFT: smaller section title + gauge */}
+        {/* LEFT: Today gauge */}
         <section>
           <h2 className="text-lg font-semibold flex items-center gap-3 mb-3 justify-center lg:justify-start">
             <span>Today&apos;s Forecast</span>
@@ -94,7 +91,7 @@ export default function PollenDashboard() {
                 fill="none"
                 strokeLinecap="round"
               />
-              {/* Foreground colored arc (severity length) */}
+              {/* Foreground arc */}
               <path
                 d="M 50 170 A 140 140 0 0 1 330 170"
                 stroke="url(#pollenGradient)"
@@ -111,7 +108,7 @@ export default function PollenDashboard() {
                 </linearGradient>
               </defs>
 
-              {/* Percentage marker – centered text, at arc end */}
+              {/* Marker */}
               <g>
                 <circle cx={markerX} cy={markerY} r="16" className="fill-white drop-shadow" />
                 <text
@@ -135,9 +132,9 @@ export default function PollenDashboard() {
           </div>
         </section>
 
-        {/* RIGHT: list + headers on the LEFT */}
+        {/* RIGHT: List */}
         <section className="w-full">
-          <div className="flex items-center gap-3 mb-2">
+          <div className="flex items-center gap-3 mb-2 justify-start">
             <span className="text-[11px] leading-none tracking-wide uppercase opacity-70">
               7-Day Forecast
             </span>
