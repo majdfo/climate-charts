@@ -1,39 +1,38 @@
-import { Link } from 'react-router-dom';
-import { useAuth } from '@/auth/AuthGate';
-import { Button } from '@/components/ui/button';
-import { TrendingUp, LogOut } from 'lucide-react';
+import { Link, NavLink } from "react-router-dom";
+import UserMenu from "@/components/UserMenu";
 
-export function Navbar() {
-  const { user, isAdmin, signOut } = useAuth();
-
+export default function Navbar() {
   return (
-    <nav className="border-b bg-card">
-      <div className="container mx-auto flex h-16 items-center justify-between px-4">
-        <Link to="/" className="flex items-center gap-2 font-bold text-xl">
-          <TrendingUp className="h-6 w-6 text-primary" />
-          <span>TrendView</span>
+    <header className="border-b bg-background/80 backdrop-blur">
+      <div className="container mx-auto px-4 h-14 flex items-center gap-4">
+        <Link to="/" className="font-semibold tracking-wide">
+          <span className="text-primary">🌱 TrendView</span>
         </Link>
-        
-        {user && (
-          <div className="flex items-center gap-4">
-            <Link to="/dashboard">
-              <Button variant="ghost">Dashboard</Button>
-            </Link>
-            <Link to="/trends">
-              <Button variant="ghost">Trends</Button>
-            </Link>
-            {isAdmin && (
-              <Link to="/admin">
-                <Button variant="ghost">Admin</Button>
-              </Link>
-            )}
-            <Button variant="outline" onClick={signOut} className="gap-2">
-              <LogOut className="h-4 w-4" />
-              Sign Out
-            </Button>
-          </div>
-        )}
+
+        <nav className="flex items-center gap-4 text-sm">
+          <NavLink
+            to="/dashboard"
+            className={({ isActive }) =>
+              isActive ? "font-semibold text-foreground" : "text-muted-foreground hover:text-foreground"
+            }
+          >
+            Dashboard
+          </NavLink>
+          <NavLink
+            to="/trends"
+            className={({ isActive }) =>
+              isActive ? "font-semibold text-foreground" : "text-muted-foreground hover:text-foreground"
+            }
+          >
+            Trends
+          </NavLink>
+        </nav>
+
+        <div className="ml-auto flex items-center gap-3">
+          {/* أي أزرار إضافية تحبيها */}
+          <UserMenu />
+        </div>
       </div>
-    </nav>
+    </header>
   );
 }
