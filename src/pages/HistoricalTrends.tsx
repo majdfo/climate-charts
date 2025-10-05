@@ -10,6 +10,7 @@ import pollen2021 from '@/assets/pollen-2021.png';
 import pollen2022 from '@/assets/pollen-2022.png';
 import pollen2023 from '@/assets/pollen-2023.png';
 import pollen2024 from '@/assets/pollen-2024.png';
+import pollen2025 from '@/assets/pollen-2025.png';
 
 // Season data from CSV
 const seasonData: Record<number, { start: string; end: string; duration: number }> = {
@@ -23,6 +24,7 @@ const seasonData: Record<number, { start: string; end: string; duration: number 
   2022: { start: '2022-04-14', end: '2022-05-24', duration: 41 },
   2023: { start: '2023-03-30', end: '2023-05-21', duration: 53 },
   2024: { start: '2024-03-30', end: '2024-05-12', duration: 44 },
+  2025: { start: '2025-03-18', end: '2025-05-12', duration: 56 },
 };
 
 const formatDate = (dateStr: string) => {
@@ -35,7 +37,7 @@ export default function HistoricalTrends() {
     <div className="container mx-auto px-4 py-8">
       <div className="mb-8">
         <h1 className="text-3xl font-bold">Historical Jordan Pollen Trends</h1>
-        <p className="text-muted-foreground">Pollen season patterns from 2015 to 2024</p>
+        <p className="text-muted-foreground">Pollen season patterns from 2015 to 2025</p>
       </div>
 
       <Card>
@@ -58,6 +60,7 @@ export default function HistoricalTrends() {
               { year: 2022, image: pollen2022 },
               { year: 2023, image: pollen2023 },
               { year: 2024, image: pollen2024 },
+              { year: 2025, image: pollen2025 },
             ].map(({ year, image }) => {
               const season = seasonData[year];
               return (
