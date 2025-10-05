@@ -105,7 +105,7 @@ export default function ForecastGauge() {
 
       {/* Daily forecasts - RIGHT SIDE */}
       <div className="flex-1 w-full space-y-2">
-        <h3 className="text-sm font-semibold text-muted-foreground mb-3 px-1">7-Day Forecast</h3>
+        <h3 <div className="text-4xl font-bold mb-2" style={{className="text-sm font-semibold text-muted-foreground mb-3 px-1">7-Day Forecast</h3>
         {forecast.map((f) => {
           const dayColor =
             f.severity === 'Low' ? 'text-green-600' :
