@@ -1,5 +1,6 @@
+// src/App.tsx
 import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
+import { Toaster as Sonner } from "sonner"; // ← أسهل وأضمن من ملف shadcn/sonner
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
@@ -18,15 +19,20 @@ const queryClient = new QueryClient();
 
 const App = () => {
   if (!firebaseConfigured) {
-    return <FirebaseSetupBanner />;
+    // عرض بانر الإعداد مع التوسترات لتظهر التحذيرات بدل كسر التطبيق
+    return (
+      <>
+        <FirebaseSetupBanner />
+        <Toaster />
+        <Sonner />
+      </>
+    );
   }
 
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <TooltipProvider>
-          <Toaster />
-          <Sonner />
           <BrowserRouter>
             <Navbar />
             <Routes>
@@ -55,9 +61,11 @@ const App = () => {
                   </ProtectedRoute>
                 }
               />
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
+            {/* خلي التوسترات داخل الـ Router */}
+            <Toaster />
+            <Sonner />
           </BrowserRouter>
         </TooltipProvider>
       </AuthProvider>
