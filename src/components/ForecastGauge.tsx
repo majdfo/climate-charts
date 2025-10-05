@@ -68,14 +68,25 @@ export default function PollenDashboard() {
     sev === 'High' ? '#ef7d1a' :
     '#ef4444'
 
+  // const advice =
+  //   sev === 'Very High'
+  //     ? 'التعرّض شديد جدًا اليوم: يُنصح بالبقاء داخل الأماكن المغلقة قدر الإمكان، استخدام كمامة محكمة (N95)، وإغلاق النوافذ وتشغيل فلتر هواء إن وُجد. لمرضى الحساسية/الربو: احمل أدويتك واتبع خطة طبيبك.'
+  //     : sev === 'High'
+  //     ? 'التعرّض عالي اليوم: قلّل الأنشطة الخارجية، استخدم كمامة عند الخروج، وأغلق النوافذ وقت الرياح. لمرضى الحساسية: راقب الأعراض وخذ الدواء الوقائي.'
+  //     : sev === 'Medium'
+  //     ? 'الأنشطة الخارجية ممكنة مع الحذر؛ تجنّب فترات الذروة (الظهر/الرياح)، واغلق النوافذ عند الحاجة.'
+  //     : '  الأنشطة الخارجية طبيعية، مع الانتباه عند تغيّر الطقس أو وجود رياح قوية.'
+
   const advice =
-    sev === 'Very High'
-      ? 'التعرّض شديد جدًا اليوم: يُنصح بالبقاء داخل الأماكن المغلقة قدر الإمكان، استخدام كمامة محكمة (N95)، وإغلاق النوافذ وتشغيل فلتر هواء إن وُجد. لمرضى الحساسية/الربو: احمل أدويتك واتبع خطة طبيبك.'
-      : sev === 'High'
-      ? 'التعرّض عالي اليوم: قلّل الأنشطة الخارجية، استخدم كمامة عند الخروج، وأغلق النوافذ وقت الرياح. لمرضى الحساسية: راقب الأعراض وخذ الدواء الوقائي.'
-      : sev === 'Medium'
-      ? 'الأنشطة الخارجية ممكنة مع الحذر؛ تجنّب فترات الذروة (الظهر/الرياح)، واغلق النوافذ عند الحاجة.'
-      : '  الأنشطة الخارجية طبيعية، مع الانتباه عند تغيّر الطقس أو وجود رياح قوية.'
+  sev === 'Very High'
+    ? "Pollen levels are *off the charts* today! Best to stay indoors if you can — keep windows shut, use an air filter if possible, and wear a snug N95 mask outside. Allergy or asthma folks: keep your meds close and stick to your doctor’s plan!"
+    : sev === 'High'
+    ? "Pollen is running high — try to limit outdoor time, wear a mask if you go out, and close windows during windy hours. Allergy sufferers, stay alert and take your preventive meds."
+    : sev === 'Medium'
+    ? "Outdoor activities are fine, just with a little caution! Avoid peak hours (noon or windy times), and close the windows if needed."
+    : sev === 'Low'
+    ? "It’s a good day to get outside — low pollen levels mean easy breathing! Just stay mindful if the weather changes or wind picks up."
+    : "Enjoy the day — conditions look calm and comfortable!";
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-4">
