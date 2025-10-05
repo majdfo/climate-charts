@@ -5,6 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import { TrendingUp, Calendar, User } from 'lucide-react';
+import { WeatherTodayCard } from '@/components/WeatherTodayCard';
 
 interface UserProfile {
   email: string;
@@ -25,9 +26,7 @@ export default function Dashboard() {
           .eq('id', user.id)
           .maybeSingle();
 
-        if (!error && data) {
-          setUserData(data);
-        }
+        if (!error && data) setUserData(data);
       }
     };
     fetchUserData();
@@ -40,6 +39,7 @@ export default function Dashboard() {
         <p className="text-muted-foreground">Welcome back to TrendView</p>
       </div>
 
+      {/* user info cards */}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -76,12 +76,16 @@ export default function Dashboard() {
         </Card>
       </div>
 
+      {/* weather today card */}
+      <div className="mt-6">
+        {/* إحداثيات إربد (بتقدري تبدّليها لاحقًا من بروفايل المستخدم) */}
+        <WeatherTodayCard lat={32.55} lon={35.81} title="Today's Weather (Irbid)" />
+      </div>
+
       <Card className="mt-6">
         <CardHeader>
           <CardTitle>Get Started with Trend Analysis</CardTitle>
-          <CardDescription>
-            Upload your data and start analyzing seasonal patterns
-          </CardDescription>
+          <CardDescription>Upload your data and start analyzing seasonal patterns</CardDescription>
         </CardHeader>
         <CardContent>
           <Link to="/trends">
