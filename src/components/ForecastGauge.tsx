@@ -4,7 +4,7 @@ import dayjs from 'dayjs'
 
 type Forecast = {
   date: string
-  severity: 'Low' | 'Medium' | 'High' | string
+  severity: 'Low' | 'Medium' | 'High' | 'Very High' | string
   unit: string
   lat: number
   lon: number
@@ -51,26 +51,42 @@ export default function PollenDashboard() {
   const sevVal =
     sev === 'Low' ? 2 :
     sev === 'Medium' ? 5 :
-    sev === 'High' ? 8 : 10
+    sev === 'High' ? 8 :
+    sev === 'Very High' ? 10 : 7
 
+  // ---- Gauge geometry ----
   const cx = 190, cy = 170, R = 140
   const pct = Math.max(0, Math.min(100, Math.round(today.score ?? 0)))
-
   const angleDeg = 180 - (pct / 100) * 180
   const angleRad = (angleDeg * Math.PI) / 180
-
   const markerR = R - 6
   const markerX = cx + markerR * Math.cos(angleRad)
   const markerY = cy - markerR * Math.sin(angleRad) + 4
 
-  const sevColor = sev === 'Low' ? '#22c55e' : sev === 'Medium' ? '#facc15' : '#ef4444'
+  const sevColor =
+    sev === 'Low' ? '#22c55e' :
+    sev === 'Medium' ? '#facc15' :
+    sev === 'High' ? '#ef7d1a' : // برتقالي لمستوى High
+    '#ef4444' // Very High
+
+  const advice =
+    sev === 'Very High'
+      ? 'التعرّض شديد جدًا اليوم: يُنصح بالبقاء داخل الأماكن المغلقة قدر الإمكان، استخدام كمامة محكمة (N95)، وإغلاق النوافذ وتشغيل فلتر هواء إن وُجد. لمرضى الحساسية/الربو: احمل أدويتك واتبع خطة طبيبك.'
+      : sev === 'High'
+      ? 'التعرّض عالي اليوم: قلّل الأنشطة الخارجية، استخدم كمامة عند الخروج، وأغلق النوافذ وقت الرياح. لمرضى الحساسية: راقب الأعراض وخذ الدواء الوقائي.'
+      : sev === 'Medium'
+      ? 'مستوى متوسط: الأنشطة الخارجية ممكنة مع الحذر؛ تجنّب فترات الذروة (الظهر/الرياح)، واغلق النوافذ عند الحاجة.'
+      : 'مستوى منخفض: الأنشطة الخارجية طبيعية، مع الانتباه عند تغيّر الطقس أو وجود رياح قوية.'
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-4">
-     
+      {/* العنوان الكبير */}
+      <h1 className="text-5xl font-extrabold text-center mb-6">
+        🌸 FloraSat – Irbid, Jordan
+      </h1>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
-        {/* LEFT: Today gauge */}
+        {/* LEFT: Today gauge + advice */}
         <section>
           <h2 className="text-lg font-semibold flex items-center gap-3 mb-3 justify-center lg:justify-start">
             <span>Today&apos;s Forecast</span>
@@ -127,12 +143,18 @@ export default function PollenDashboard() {
               </div>
             </div>
           </div>
+
+          {/* Advice box */}
+          <div className="mt-4 max-w-md rounded-lg border bg-white/70 p-3 text-sm leading-6">
+            <span className="font-semibold" style={{ color: sevColor }}>التوصية: </span>
+            <span className="text-gray-700">{advice}</span>
+          </div>
         </section>
 
         {/* RIGHT: List */}
         <section className="w-full">
-          {/* العنوانين على طرفين */}
-          <div className="flex items-center justify-between gap-2">
+          {/* العناوين على طرفين */}
+          <div className="flex items-center justify-between mb-2">
             <span className="text-[11px] leading-none tracking-wide uppercase opacity-70">
               7-Day Forecast
             </span>
@@ -141,11 +163,13 @@ export default function PollenDashboard() {
             </span>
           </div>
 
-          <div className="space-y-2">
+          {/* نزّل الكروت شوي عن العناوين */}
+          <div className="space-y-2 mt-3">
             {forecast.map((f) => {
               const dayColor =
                 f.severity === 'Low' ? 'text-green-600' :
                 f.severity === 'Medium' ? 'text-yellow-600' :
+                f.severity === 'High' ? 'text-orange-600' :
                 'text-red-600'
 
               return (
