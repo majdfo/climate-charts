@@ -8,17 +8,6 @@ import { ColumnMapper } from '@/components/trends/ColumnMapper';
 import { SettingsPanel } from '@/components/trends/SettingsPanel';
 import { SeasonTable } from '@/components/trends/SeasonTable';
 import { TopYearsBar } from '@/components/trends/TopYearsBar';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import pollen2015 from '@/assets/pollen-2015.png';
-import pollen2016 from '@/assets/pollen-2016.png';
-import pollen2017 from '@/assets/pollen-2017.png';
-import pollen2018 from '@/assets/pollen-2018.png';
-import pollen2019 from '@/assets/pollen-2019.png';
-import pollen2020 from '@/assets/pollen-2020.png';
-import pollen2021 from '@/assets/pollen-2021.png';
-import pollen2022 from '@/assets/pollen-2022.png';
-import pollen2023 from '@/assets/pollen-2023.png';
-import pollen2024 from '@/assets/pollen-2024.png';
 import {
   processData,
   detectSeasons,
@@ -174,10 +163,9 @@ export default function Trends() {
 
           {results.length > 0 ? (
             <Tabs defaultValue="table" className="w-full">
-              <TabsList className="grid w-full grid-cols-3">
+              <TabsList className="grid w-full grid-cols-2">
                 <TabsTrigger value="table">Season Table</TabsTrigger>
                 <TabsTrigger value="charts">Charts</TabsTrigger>
-                <TabsTrigger value="historical">Jordan Trends</TabsTrigger>
               </TabsList>
               
               <TabsContent value="table" className="space-y-6">
@@ -186,39 +174,6 @@ export default function Trends() {
               
               <TabsContent value="charts" className="space-y-6">
                 <TopYearsBar results={results} />
-              </TabsContent>
-
-              <TabsContent value="historical" className="space-y-6">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Historical Jordan Pollen Trends</CardTitle>
-                    <CardDescription>Pollen season patterns from 2015 to 2024</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                      {[
-                        { year: 2015, image: pollen2015 },
-                        { year: 2016, image: pollen2016 },
-                        { year: 2017, image: pollen2017 },
-                        { year: 2018, image: pollen2018 },
-                        { year: 2019, image: pollen2019 },
-                        { year: 2020, image: pollen2020 },
-                        { year: 2021, image: pollen2021 },
-                        { year: 2022, image: pollen2022 },
-                        { year: 2023, image: pollen2023 },
-                        { year: 2024, image: pollen2024 },
-                      ].map(({ year, image }) => (
-                        <div key={year} className="border rounded-lg p-4 bg-card">
-                          <img 
-                            src={image} 
-                            alt={`Pollen season trends for ${year}`}
-                            className="w-full h-auto rounded"
-                          />
-                        </div>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
               </TabsContent>
             </Tabs>
           ) : (

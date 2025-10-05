@@ -11,6 +11,7 @@ import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
 import Dashboard from "./pages/Dashboard";
 import Trends from "./pages/Trends";
+import HistoricalTrends from "./pages/HistoricalTrends";
 import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
 
@@ -38,6 +39,14 @@ export default function App() {
                 element={
                   <ProtectedRoute>
                     <Trends />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/historical-trends"
+                element={
+                  <ProtectedRoute>
+                    <HistoricalTrends />
                   </ProtectedRoute>
                 }
               />
