@@ -16,40 +16,43 @@ export type Database = {
     Tables: {
       pollen_forecast: {
         Row: {
-          created_at: string | null
           date: string
           details: Json | null
           generated_at: string | null
           id: number
+          inserted_at: string | null
           lat: number
           lon: number
           score: number
           severity: string
           unit: string | null
+          updated_at: string | null
         }
         Insert: {
-          created_at?: string | null
           date: string
           details?: Json | null
           generated_at?: string | null
           id?: number
+          inserted_at?: string | null
           lat: number
           lon: number
           score: number
           severity: string
           unit?: string | null
+          updated_at?: string | null
         }
         Update: {
-          created_at?: string | null
           date?: string
           details?: Json | null
           generated_at?: string | null
           id?: number
+          inserted_at?: string | null
           lat?: number
           lon?: number
           score?: number
           severity?: string
           unit?: string | null
+          updated_at?: string | null
         }
         Relationships: []
       }
