@@ -1,11 +1,10 @@
 import { useEffect, useState } from 'react'
-import Papa from 'papaparse'
 import dayjs from 'dayjs'
+import { fetchNext7Days } from '@/services/forecast'
 
 type Forecast = {
   date: string
   severity: 'Low' | 'Medium' | 'High' | 'Very High' | string
-  unit: string
   lat: number
   lon: number
   score?: number
@@ -19,23 +18,12 @@ export default function PollenDashboard() {
   useEffect(() => {
     (async () => {
       try {
-        const response = await fetch('/pollen_forecast_daily_rows.csv')
-        const csvText = await response.text()
-        Papa.parse(csvText, {
-          header: true,
-          dynamicTyping: true,
-          complete: (results) => {
-            const data = results.data as Forecast[]
-            const validData = data.filter(row => row.date && row.severity)
-            setForecast(validData)
-            setLoading(false)
-          },
-          error: (error) => {
-            setErrMsg(error.message)
-            setLoading(false)
-          }
-        })
+        const data = await fetchNext7Days(32.556, 35.85)
+        console.log('Fetched forecast data:', data)
+        setForecast(data)
+        setLoading(false)
       } catch (e: any) {
+        console.error('Error fetching forecast:', e)
         setErrMsg(e?.message || 'Unknown error')
         setLoading(false)
       }
