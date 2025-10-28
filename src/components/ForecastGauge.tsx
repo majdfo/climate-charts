@@ -105,7 +105,7 @@ export default function PollenDashboard() {
                 stroke="url(#pollenGradient)"
                 strokeWidth="28"
                 fill="none"
-                strokeDasharray={`${(sevVal / 10) * 440}, 440`}
+                strokeDasharray={`${(pct / 100) * 440}, 440`}
                 strokeLinecap="round"
               />
               <defs>
